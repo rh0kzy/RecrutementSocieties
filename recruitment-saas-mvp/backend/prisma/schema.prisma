@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  active    Boolean  @default(true)
+  styling   Json?
+  createdAt DateTime @default(now())
+  jobs      Job[]
+  actions   CompanyAction[]
+}
+
+model Job {
+  id           Int       @id @default(autoincrement())
+  title        String
+  description  String
+  deadline     DateTime?
+  extraQuestions Json?
+  createdAt    DateTime  @default(now())
+  company      Company   @relation(fields: [companyId], references: [id])
+  companyId    Int
+  applications Application[]
+}
+
+model Candidate {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  profile     Json?
+  createdAt   DateTime @default(now())
+  ipLogs      IPLog[]
+  applications Application[]
+}
+
+model Application {
+  id         Int      @id @default(autoincrement())
+  candidate  Candidate @relation(fields: [candidateId], references: [id])
+  candidateId Int
+  job        Job       @relation(fields: [jobId], references: [id])
+  jobId      Int
+  company    Company   @relation(fields: [companyId], references: [id])
+  companyId  Int
+  status     ApplicationStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model AdminAction {
+  id        Int      @id @default(autoincrement())
+  adminId   Int
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model CompanyAction {
+  id        Int      @id @default(autoincrement())
+  companyId Int
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model IPLog {
+  id        Int      @id @default(autoincrement())
+  ip        String
+  createdAt DateTime @default(now())
+  candidate Candidate? @relation(fields: [candidateId], references: [id])
+  candidateId Int?
+  companyId Int?
+}

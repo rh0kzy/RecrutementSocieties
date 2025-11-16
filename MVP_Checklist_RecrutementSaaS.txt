@@ -151,8 +151,10 @@ IMPLEMENTATION TASKS / TECHNICAL CHECKLIST
 Project setup
 - [ ] Create repo and initial commit
 - [ ] Add README and this checklist
-- [ ] Set up basic stack: e.g., Node/Express + PostgreSQL Or Django + PostgreSQL (decide stack)
+- [x] Set up basic stack: Node/Express + PostgreSQL (chosen)
 - [ ] Setup environment variables and .env template
+- [x] Use Supabase as the primary database provider (managed Postgres)
+ - [x] Remove docker/docker-compose files and references (Docker not required for MVP)
 - [ ] Setup email service (SMTP or transactional email provider) for notifications
 
 Authentication
@@ -173,6 +175,7 @@ Files & Storage
 - [ ] Encrypted storage or at least secure file permissions for saved files
 - [ ] Validate file types (e.g., pdf, doc, docx, jpg, png) and file size limits
 - [ ] Prevent file download, allow view-only interface
+- [x] Use Supabase Storage as the primary file storage (optional for MVP)
 
 UI/UX
 - [ ] Login pages (Admin/Company/Candidate) (bilingual support)
@@ -229,7 +232,7 @@ PRIORITIZED ROADMAP (Start -> Finish)
 ----------------------------------------
 Phase 0 — Planning & Project Setup
 - [ ] Finalize scope and priorities (confirm must-have vs nice-to-have items)
-- [ ] Choose technology stack (e.g., Node/Express + Postgres, or Django + Postgres)
+- [x] Choose technology stack: Node/Express + Postgres
 - [ ] Create repository and add this checklist/README
 - [ ] Initialize issue tracker or project board
 
@@ -239,6 +242,7 @@ Phase 1 — Core Infrastructure & Authentication (MVP minimum)
 - [ ] Implement authentication (email + password) for Company & Candidate accounts
 - [ ] Implement single Admin account creation & RBAC for Admin/Company/Candidate
 - [ ] Email service setup for notifications (SMTP / transactional provider)
+- [ ] Decide on Supabase Auth vs in-app Auth (Supabase Auth recommended for faster MVP)
 
 Phase 2 — Database Models & File Storage
 - [ ] Implement core models: Company, Job, Candidate, Application, AdminAction, CompanyAction logs
