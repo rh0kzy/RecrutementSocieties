@@ -1,0 +1,303 @@
+Recruitment SaaS Platform - MVP Blueprint & Checklist
+Date: 2025-11-16
+
+Purpose:
+This file is a structured, actionable checklist for the Recruitment SaaS Platform MVP. It captures features, roles, workflows, security considerations, and initial implementation tasks.
+
+Legend:
+- [ ] = Pending
+- [x] = Completed
+
+----------------------------------------
+1) USERS & ROLES
+----------------------------------------
+Admin (Single admin initially)
+- [ ] Create admin account (you)
+- [ ] Full control / super admin capabilities
+- [ ] Create, deactivate, delete company accounts
+- [ ] Reset company passwords
+- [ ] View candidate applications across companies
+- [ ] Activity log for admin actions (create/delete company, view applications)
+- [ ] Admin dashboard: total companies, total applications, recent activity
+- [ ] Email notifications: new company created, new candidate application
+
+Companies
+- [ ] Sign up after manual payment (BaridiMob/CCP) — manual verification required
+- [ ] Login with email + password
+- [ ] Company dashboard: post jobs, set deadlines
+- [ ] Customize application forms (add extra questions per job)
+- [ ] View candidates’ docs inside the platform only (no downloads)
+- [ ] Deactivate/pause account temporarily
+- [ ] Change password
+- [ ] Apply basic styling (colors/fonts) in dashboard
+- [ ] Delete candidate applications
+- [ ] Set job application deadlines
+- [ ] Activity log for company actions
+- [ ] Receive email notification for new applications
+
+Candidates
+- [ ] Register with email + password
+- [ ] Submit applications to multiple companies
+- [ ] Fill full profile: personal info, skills, experience, education, CV, ID card, military situation
+- [ ] Candidate cannot edit submitted profile
+- [ ] Candidate only receives acceptance/rejection emails
+- [ ] Submission logged with timestamp and IP address
+- [ ] Validate form inputs, allowed file types and size limits
+
+----------------------------------------
+2) CANDIDATE WORKFLOW
+----------------------------------------
+- [ ] Candidate visits company page
+- [ ] Candidate fills profile info, uploads CV, ID card, military situation (file validation enforced)
+- [ ] On submit: save application in platform
+- [ ] On submit: email to company (new application)
+- [ ] On submit: email to candidate (confirmation)
+- [ ] On submit: email to admin (new application)
+- [ ] Company reviews application, chooses Accept/Reject
+- [ ] Platform sends acceptance or rejection email to candidate
+- [ ] Candidate cannot view application details on platform after submit
+- [ ] Log submission timestamp and IP for candidate
+
+----------------------------------------
+3) COMPANY DASHBOARD FEATURES
+----------------------------------------
+- [ ] Post job listings with deadlines
+- [ ] Customize per-job application forms (dynamic extra questions)
+- [ ] View candidate submissions with CV, ID card, and military status inside platform (view-only)
+- [ ] Deactivate/activate account
+- [ ] Basic styling customization (company colors & fonts)
+- [ ] Activity log for company actions (post job, deactivate/pause account, add questions)
+- [ ] Search/filter candidates by skills, experience, education, military situation, and extra questions
+
+----------------------------------------
+4) ADMIN PANEL FEATURES
+----------------------------------------
+- [ ] Single admin initially, support multi-admin later
+- [ ] Create, deactivate, delete companies
+- [ ] Reset company passwords
+- [ ] View all applications & job posts
+- [ ] Search companies by name / email
+- [ ] Activity log for admin actions
+- [ ] Admin dashboard stats: total companies, total applications, recent activity
+- [ ] Email notifications: new company signups, new candidate applications
+
+----------------------------------------
+5) EMAILS & NOTIFICATIONS
+----------------------------------------
+Candidate application triggers:
+- [ ] Email to company (new candidate application)
+- [ ] Email to candidate (application received)
+- [ ] Email to admin (new application alert)
+
+Company decision triggers:
+- [ ] Acceptance email to candidate
+- [ ] Rejection email to candidate
+
+Other:
+- [ ] Notification for job posting (optional, MVP low priority)
+- [ ] Email templates: contact form, password reset, admin alerts
+
+----------------------------------------
+6) SECURITY & DATA
+----------------------------------------
+- [ ] Secure storage for candidate documents and profile data (encrypted at rest)
+- [ ] Log IP addresses for candidate applications and company actions
+- [ ] Simple login (no CAPTCHA) + email verification at MVP stage
+- [ ] Company password reset capability; admin can reset company passwords
+- [ ] Terms of Service and Privacy Policy pages added
+- [ ] Authorization rules: companies see only their data; candidates cannot edit profile after submission
+- [ ] No downloads for candidate documents (view only in platform)
+
+----------------------------------------
+7) DESIGN & UX
+----------------------------------------
+- [ ] Responsive UI (desktop, tablet, mobile)
+- [ ] No public job listing page (goes straight to login/company pages)
+- [ ] Bilingual: French + English
+- [ ] Help section (text-only)
+- [ ] Contact form that emails admin
+- [ ] Basic styling customization per company (colors/fonts)
+
+----------------------------------------
+8) STORAGE & FILES
+----------------------------------------
+- [ ] Candidate uploads: CV, ID card, military situation
+- [ ] Validate file size and types
+- [ ] Documents stored permanently (unless company deletes applicant)
+- [ ] No backups at MVP stage (note: add backups in production)
+
+----------------------------------------
+9) FUTURE SCALABILITY
+----------------------------------------
+- [ ] Multi-admin support in future
+- [ ] Architecture to support future features: AI candidate matching, premium subscriptions
+- [ ] Keep activity logs and structured data for analytics later
+
+----------------------------------------
+10) EXCLUDED (MVP) FEATURES
+----------------------------------------
+- [ ] Messaging system between candidates and company (not included)
+- [ ] Public job listings page (not included)
+- [ ] Deadline reminders for companies (not included)
+- [ ] Announcement / news system (not included)
+- [ ] CAPTCHA or strong anti-bot protection (not included)
+- [ ] Candidate profile access after submission (not included)
+- [ ] Analytics for admin on job deadlines (not included)
+- [ ] Confirmation page after submission (only emails are sent)
+
+----------------------------------------
+IMPLEMENTATION TASKS / TECHNICAL CHECKLIST
+----------------------------------------
+Project setup
+- [ ] Create repo and initial commit
+- [ ] Add README and this checklist
+- [ ] Set up basic stack: e.g., Node/Express + PostgreSQL Or Django + PostgreSQL (decide stack)
+- [ ] Setup environment variables and .env template
+- [ ] Setup email service (SMTP or transactional email provider) for notifications
+
+Authentication
+- [ ] Email + password for Companies & Candidates
+- [ ] Single global Admin account creation script
+- [ ] Password reset flows for Companies (by email) and Admin reset capability
+- [ ] Email verification (optional for MVP, recommended)
+
+Database & Models
+- [ ] Company model: profile, styling, status (active/paused/deactivated), payment status
+- [ ] Job model: title, description, deadline, extraQuestions, visibility status
+- [ ] Candidate model: profile fields, files (links to storage), IP logs
+- [ ] Application model: candidate, job, company, status (pending/accepted/rejected), timestamp, ip
+- [ ] AdminAction, CompanyAction logs
+
+Files & Storage
+- [ ] Choose storage provider (local for MVP or cloud like S3)
+- [ ] Encrypted storage or at least secure file permissions for saved files
+- [ ] Validate file types (e.g., pdf, doc, docx, jpg, png) and file size limits
+- [ ] Prevent file download, allow view-only interface
+
+UI/UX
+- [ ] Login pages (Admin/Company/Candidate) (bilingual support)
+- [ ] Company dashboard (post job, manage forms, view candidates)
+- [ ] Candidate application forms with file upload
+- [ ] Admin dashboard (statistics, activity logs)
+
+Search & Filtering
+- [ ] Implement candidate search & filter in company dashboard (skills, experience, education, military status, extra questions)
+
+Email Templates
+- [ ] New application email to company
+- [ ] New application confirmation to candidate
+- [ ] Admin alert email for new application
+- [ ] Acceptance / rejection emails to candidate
+- [ ] Company signup notification to admin
+
+Security & Logs
+- [ ] Implement logging of IPs and timestamps
+- [ ] Role-based access control (RBAC): Admin, Company, Candidate
+- [ ] Ensure private documents are view-only (no direct download URLs)
+
+Testing
+- [ ] Basic unit tests for core models and API endpoints
+- [ ] Integration test for candidate submission and notification flow
+- [ ] Manual test checklist for file validation & size restrictions
+
+Deployment (MVP)
+- [ ] Choose hosting: VPS, PaaS or cloud provider
+- [ ] Environment config for production (email, database, storage credentials)
+- [ ] Minimal monitoring (email or logging only)
+
+----------------------------------------
+ACCEPTANCE CRITERIA (basic)
+----------------------------------------
+- [ ] Admin can create and manage companies
+- [ ] Companies can post jobs, customize forms, view candidates (view only), and receive email notifications
+- [ ] Candidates can apply with required files; their submissions are stored securely and logged with IP and timestamp
+- [ ] Email notifications are sent to company, candidate, and admin on application submit
+- [ ] Activity logs show admin and company actions
+- [ ] No downloads of candidate documents available; documents can be deleted by company
+- [ ] Bilingual UI minimally functional for French and English
+
+----------------------------------------
+NEXT STEPS
+----------------------------------------
+- [ ] Review this checklist & confirm priorities
+- [ ] Convert to issue tickets and assign priorities/estimates
+- [ ] Create repo and initial skeleton matching chosen tech stack
+- [ ] Implement core MVP features in priority order: authentication, company account lifecycle, job posting, candidate submission, email notifications
+
+----------------------------------------
+PRIORITIZED ROADMAP (Start -> Finish)
+----------------------------------------
+Phase 0 — Planning & Project Setup
+- [ ] Finalize scope and priorities (confirm must-have vs nice-to-have items)
+- [ ] Choose technology stack (e.g., Node/Express + Postgres, or Django + Postgres)
+- [ ] Create repository and add this checklist/README
+- [ ] Initialize issue tracker or project board
+
+Phase 1 — Core Infrastructure & Authentication (MVP minimum)
+- [ ] Environment setup: repo, .env template, CI skeleton (optional)
+- [ ] Install the chosen web framework and database driver
+- [ ] Implement authentication (email + password) for Company & Candidate accounts
+- [ ] Implement single Admin account creation & RBAC for Admin/Company/Candidate
+- [ ] Email service setup for notifications (SMTP / transactional provider)
+
+Phase 2 — Database Models & File Storage
+- [ ] Implement core models: Company, Job, Candidate, Application, AdminAction, CompanyAction logs
+- [ ] Implement file storage: local or cloud (S3), file validation and size limits
+- [ ] Secure storage: access control, encryption at rest (if possible) or strong permissions
+
+Phase 3 — Company Account Lifecycle & Payment Flow
+- [ ] Admin: Create/Approve company account (manual payment verification)
+- [ ] Company: Login, change password, update profile, deactivate/activate
+- [ ] Company dashboard initial UI skeleton and navigation
+
+Phase 4 — Job Posting & Application Forms
+- [ ] Company: Post job with title, description, deadline
+- [ ] Company: Customize per-job application forms with extra questions
+- [ ] Company: Delete job or pause job postings
+
+Phase 5 — Candidate Flow & Submission
+- [ ] Candidate: Register with email + password
+- [ ] Candidate: Fill profile, upload validated files (CV, ID, military situation)
+- [ ] Candidate: Submit application (save, link to job & company, log IP & timestamp)
+- [ ] Implement view-only candidate documents for company (no downloads)
+
+Phase 6 — Notifications, Logging, & Admin Actions
+- [ ] On application: send email to company, candidate, and admin
+- [ ] Implement accept/reject actions in company dashboard; trigger candidate emails
+- [ ] Record all actions in activity logs (AdminAction & CompanyAction)
+- [ ] Admin: search/view companies, reset passwords, view all applications
+
+Phase 7 — UI/UX Polish & Localization
+- [ ] Bilingual translation (French / English) basics
+- [ ] Responsive design and initial styling, company color/font customization
+- [ ] Add Help page and Contact form (sends email to admin)
+
+Phase 8 — Security, Compliance & Privacy
+- [ ] Add Terms of Service and Privacy Policy pages
+- [ ] Ensure RBAC and data isolation between companies
+- [ ] Ensure candidate files cannot be downloaded and are view-only within platform
+- [ ] IP logging for submissions; basic log retention policy (MVP: store as needed)
+
+Phase 9 — Testing & QA
+- [ ] Unit tests for core models and APIs
+- [ ] Integration test: candidate submission -> email alerts -> company/admin flow
+- [ ] Manual test checklist: file validation, dead line enforcement, role access control
+
+Phase 10 — Deployment & Monitoring (MVP release)
+- [ ] Choose hosting (VPS, PaaS or cloud), provisioning for DB and storage
+- [ ] Add production environment variables and email credentials
+- [ ] Deploy MVP; configure basic logs and alerts for critical failures
+
+Phase 11 — Post-MVP & Next Features
+- [ ] Evaluate user feedback and metrics
+- [ ] Plan for multi-admin support, analytics, AI matching, premium subscriptions
+- [ ] Convert roadmap to sprints and backlog (issue tickets)
+
+Remarks & Acceptance Criteria
+- [ ] Each phase should be tested before moving to the next. For MVP, the following are required before release: authentication & roles, company/job posting, candidate submission + email notifications, admin management, files view-only, and basic UI localization.
+- [ ] Excluded features listed above should be explicitly blocked / deprioritized so core flows stay simple and on-time.
+
+Notes:
+- This file is intentionally in text format (user requested) and can be converted to Markdown (README.md) or broken into issue tickets as needed.
+
+End of file.
