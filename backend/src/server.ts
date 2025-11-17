@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { PrismaClient } from '@prisma/client';
 import authRouter from './routes/auth.routes';
 import jobRouter from './routes/job.routes';
@@ -9,9 +11,39 @@ import applicationRouter from './routes/application.routes';
 dotenv.config();
 const prisma = new PrismaClient();
 const app = express();
+
+// Security middleware
+app.use(helmet());
+
+// CORS middleware
 app.use(cors());
+
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Apply rate limiting to all routes
+app.use(limiter);
+
+// Stricter rate limiting for auth routes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
+  message: 'Too many authentication attempts, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Body parsing middleware
 app.use(express.json());
-app.use('/api/auth', authRouter);
+
+// Routes
+app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/jobs', jobRouter);
 app.use('/api/applications', applicationRouter);
 

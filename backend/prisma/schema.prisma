@@ -8,64 +8,82 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id                    Int       @id @default(autoincrement())
+  email                 String    @unique
+  password              String
+  role                  Role
+  passwordResetToken    String?
+  passwordResetExpires  DateTime?
+  createdAt             DateTime  @default(now())
+
+  admin     Admin?
+  company   Company?
+  candidate Candidate?
+}
+
+enum Role {
+  ADMIN
+  COMPANY
+  CANDIDATE
+}
+
 model Admin {
-  id                Int       @id @default(autoincrement())
-  email             String    @unique
-  password          String
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  createdAt         DateTime  @default(now())
+  id      Int    @id @default(autoincrement())
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int    @unique
+  actions AdminAction[]
 }
 
 model Company {
-  id                Int              @id @default(autoincrement())
-  name              String
-  email             String           @unique
-  password          String
-  active            Boolean          @default(true)
-  styling           Json?
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  createdAt         DateTime         @default(now())
-  jobs              Job[]
-  actions           CompanyAction[]
-  applications      Application[]
-}
+  id        Int      @id @default(autoincrement())
+  name      String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @unique
+  active    Boolean  @default(true)
+  styling   Json?
+  createdAt DateTime @default(now())
 
-model Job {
-  id           Int       @id @default(autoincrement())
-  title        String
-  description  String
-  deadline     DateTime?
-  extraQuestions Json?
-  createdAt    DateTime  @default(now())
-  company      Company   @relation(fields: [companyId], references: [id])
-  companyId    Int
+  jobs         Job[]
+  actions      CompanyAction[]
   applications Application[]
 }
 
+model Job {
+  id             Int           @id @default(autoincrement())
+  title          String
+  description    String
+  deadline       DateTime?
+  extraQuestions Json?
+  createdAt      DateTime      @default(now())
+  company        Company       @relation(fields: [companyId], references: [id])
+  companyId      Int
+  applications   Application[]
+}
+
 model Candidate {
-  id                Int             @id @default(autoincrement())
-  email             String          @unique
-  password          String
-  profile           Json?
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  createdAt         DateTime        @default(now())
-  ipLogs            IPLog[]
-  applications      Application[]
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @unique
+  profile   Json?
+  createdAt DateTime @default(now())
+
+  ipLogs       IPLog[]
+  applications Application[]
 }
 
 model Application {
-  id         Int      @id @default(autoincrement())
-  candidate  Candidate @relation(fields: [candidateId], references: [id])
+  id          Int               @id @default(autoincrement())
+  candidate   Candidate         @relation(fields: [candidateId], references: [id])
   candidateId Int
-  job        Job       @relation(fields: [jobId], references: [id])
-  jobId      Int
-  company    Company   @relation(fields: [companyId], references: [id])
-  companyId  Int
-  status     ApplicationStatus @default(PENDING)
-  createdAt  DateTime @default(now())
+  job         Job               @relation(fields: [jobId], references: [id])
+  jobId       Int
+  company     Company           @relation(fields: [companyId], references: [id])
+  companyId   Int
+  status      ApplicationStatus @default(PENDING)
+  createdAt   DateTime          @default(now())
 }
 
 enum ApplicationStatus {
@@ -76,6 +94,7 @@ enum ApplicationStatus {
 
 model AdminAction {
   id        Int      @id @default(autoincrement())
+  admin     Admin    @relation(fields: [adminId], references: [id])
   adminId   Int
   action    String
   details   String?
@@ -84,18 +103,17 @@ model AdminAction {
 
 model CompanyAction {
   id        Int      @id @default(autoincrement())
-  companyId Int
   company   Company  @relation(fields: [companyId], references: [id])
+  companyId Int
   action    String
   details   String?
   createdAt DateTime @default(now())
 }
 
 model IPLog {
-  id        Int      @id @default(autoincrement())
-  ip        String
-  createdAt DateTime @default(now())
-  candidate Candidate? @relation(fields: [candidateId], references: [id])
+  id          Int       @id @default(autoincrement())
+  ip          String
+  createdAt   DateTime  @default(now())
+  candidate   Candidate? @relation(fields: [candidateId], references: [id])
   candidateId Int?
-  companyId Int?
 }

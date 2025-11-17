@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axios';
 
 // Define the roles
 type Role = 'ADMIN' | 'COMPANY' | 'CANDIDATE';
@@ -24,11 +24,9 @@ const LoginPage: React.FC = () => {
       return;
     }
 
-    const lowerCaseRole = role.toLowerCase();
-    const url = `http://localhost:3000/api/auth/${lowerCaseRole}/login`;
-
     try {
-      const response = await axios.post(url, { email, password });
+          try {
+      const response = await api.post('/auth/login', { email, password, role });
       const { token, user } = response.data;
 
       // Store token and user info

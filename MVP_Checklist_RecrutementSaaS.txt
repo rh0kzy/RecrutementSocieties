@@ -264,17 +264,17 @@ PRIORITY 2: Email Service Setup
 
 PRIORITY 3: Frontend Authentication Pages
 - [x] 1.12 - Create Login page with role selection (Admin/Company/Candidate)
-- [ ] 1.13 - Create Company signup page with form validation
-- [ ] 1.14 - Create Candidate signup page with form validation
-- [ ] 1.15 - Setup Axios interceptors for JWT token handling
-- [ ] 1.16 - Create protected route wrapper component
-- [ ] 1.17 - Add logout functionality
+- [x] 1.13 - Create Company signup page with form validation
+- [x] 1.14 - Create Candidate signup page with form validation
+- [x] 1.15 - Setup Axios interceptors for JWT token handling
+- [x] 1.16 - Create protected route wrapper component
+- [x] 1.17 - Add logout functionality
 
 PRIORITY 4: Input Validation & Security
-- [ ] 1.18 - Install and configure Zod or Joi for validation
-- [ ] 1.19 - Add validation schemas for all auth endpoints
-- [ ] 1.20 - Add rate limiting middleware (express-rate-limit)
-- [ ] 1.21 - Add helmet.js for security headers
+- [x] 1.18 - Install and configure Zod or Joi for validation
+- [x] 1.19 - Add validation schemas for all auth endpoints
+- [x] 1.20 - Add rate limiting middleware (express-rate-limit)
+- [x] 1.21 - Add helmet.js for security headers
 
 ⏳ UPCOMING PHASES
 ----------------------------------------
