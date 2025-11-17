@@ -230,72 +230,193 @@ NEXT STEPS
 ----------------------------------------
 PRIORITIZED ROADMAP (Start -> Finish)
 ----------------------------------------
+
+✅ COMPLETED PHASES
+----------------------------------------
 Phase 0 — Planning & Project Setup
-- [ ] Finalize scope and priorities (confirm must-have vs nice-to-have items)
-- [x] Choose technology stack: Node/Express + Postgres
-- [ ] Create repository and add this checklist/README
-- [ ] Initialize issue tracker or project board
+- [x] Finalize scope and priorities (confirm must-have vs nice-to-have items)
+- [x] Choose technology stack: Node/Express + Postgres + Supabase
+- [x] Create repository and project structure
+- [x] Setup backend skeleton with routes (auth, job, application)
+- [x] Setup frontend skeleton with React + Vite + Tailwind
+- [x] Initialize Prisma with complete schema (all models)
+- [x] Connect to Supabase database (tested and working)
+- [x] Install all dependencies (backend + frontend)
+- [x] Create design system (charte graphique with colors, fonts, logo prompts)
+- [x] Setup environment variables (.env for backend, .env.local for frontend)
 
-Phase 1 — Core Infrastructure & Authentication (MVP minimum)
-- [ ] Environment setup: repo, .env template, CI skeleton (optional)
-- [ ] Install the chosen web framework and database driver
-- [ ] Implement authentication (email + password) for Company & Candidate accounts
-- [ ] Implement single Admin account creation & RBAC for Admin/Company/Candidate
-- [ ] Email service setup for notifications (SMTP / transactional provider)
-- [ ] Decide on Supabase Auth vs in-app Auth (Supabase Auth recommended for faster MVP)
+📍 CURRENT PHASE - Phase 1 — Core Infrastructure & Authentication
+----------------------------------------
+PRIORITY 1: Backend Authentication & Authorization
+- [x] 1.1 - Setup JWT middleware and authentication helper functions
+- [x] 1.2 - Implement Admin signup/login endpoints (with bcrypt hashing)
+- [x] 1.3 - Implement Company signup/login endpoints (email verification optional)
+- [x] 1.4 - Implement Candidate signup/login endpoints
+- [x] 1.5 - Create RBAC middleware (protect routes by role: Admin/Company/Candidate)
+- [x] 1.6 - Add password reset flow (generate token, send email, reset)
+- [x] 1.7 - Create Admin seed script (run once to create admin account)
 
-Phase 2 — Database Models & File Storage
-- [ ] Implement core models: Company, Job, Candidate, Application, AdminAction, CompanyAction logs
-- [ ] Implement file storage: local or cloud (S3), file validation and size limits
-- [ ] Secure storage: access control, encryption at rest (if possible) or strong permissions
+PRIORITY 2: Email Service Setup
+- [x] 1.8 - Choose email provider (Nodemailer + Gmail/SendGrid/Resend)
+- [x] 1.9 - Create email templates (welcome, password reset, application received)
+- [x] 1.10 - Setup SMTP configuration in .env
+- [x] 1.11 - Test email sending functionality
 
-Phase 3 — Company Account Lifecycle & Payment Flow
-- [ ] Admin: Create/Approve company account (manual payment verification)
-- [ ] Company: Login, change password, update profile, deactivate/activate
-- [ ] Company dashboard initial UI skeleton and navigation
+PRIORITY 3: Frontend Authentication Pages
+- [x] 1.12 - Create Login page with role selection (Admin/Company/Candidate)
+- [ ] 1.13 - Create Company signup page with form validation
+- [ ] 1.14 - Create Candidate signup page with form validation
+- [ ] 1.15 - Setup Axios interceptors for JWT token handling
+- [ ] 1.16 - Create protected route wrapper component
+- [ ] 1.17 - Add logout functionality
 
-Phase 4 — Job Posting & Application Forms
-- [ ] Company: Post job with title, description, deadline
-- [ ] Company: Customize per-job application forms with extra questions
-- [ ] Company: Delete job or pause job postings
+PRIORITY 4: Input Validation & Security
+- [ ] 1.18 - Install and configure Zod or Joi for validation
+- [ ] 1.19 - Add validation schemas for all auth endpoints
+- [ ] 1.20 - Add rate limiting middleware (express-rate-limit)
+- [ ] 1.21 - Add helmet.js for security headers
 
-Phase 5 — Candidate Flow & Submission
-- [ ] Candidate: Register with email + password
-- [ ] Candidate: Fill profile, upload validated files (CV, ID, military situation)
-- [ ] Candidate: Submit application (save, link to job & company, log IP & timestamp)
-- [ ] Implement view-only candidate documents for company (no downloads)
+⏳ UPCOMING PHASES
+----------------------------------------
 
-Phase 6 — Notifications, Logging, & Admin Actions
-- [ ] On application: send email to company, candidate, and admin
-- [ ] Implement accept/reject actions in company dashboard; trigger candidate emails
-- [ ] Record all actions in activity logs (AdminAction & CompanyAction)
-- [ ] Admin: search/view companies, reset passwords, view all applications
+Phase 2 — Admin Dashboard & Company Management
+- [ ] 2.1 - Create Admin dashboard layout with navigation
+- [ ] 2.2 - Build Admin: View all companies (table with search/filter)
+- [ ] 2.3 - Build Admin: Create new company account
+- [ ] 2.4 - Build Admin: Deactivate/activate company
+- [ ] 2.5 - Build Admin: Reset company password
+- [ ] 2.6 - Build Admin: View all applications across companies
+- [ ] 2.7 - Build Admin: Activity logs viewer
+- [ ] 2.8 - Build Admin: Dashboard stats (total companies, applications)
+- [ ] 2.9 - Backend: Admin CRUD endpoints for companies
+- [ ] 2.10 - Backend: Admin view all applications endpoint
 
-Phase 7 — UI/UX Polish & Localization
-- [ ] Bilingual translation (French / English) basics
-- [ ] Responsive design and initial styling, company color/font customization
-- [ ] Add Help page and Contact form (sends email to admin)
+Phase 3 — Company Dashboard & Job Posting
+- [ ] 3.1 - Create Company dashboard layout with navigation
+- [ ] 3.2 - Build Company: Profile settings page
+- [ ] 3.3 - Build Company: Create job posting form
+- [ ] 3.4 - Build Company: View/edit/delete jobs table
+- [ ] 3.5 - Build Company: Add custom questions to job form
+- [ ] 3.6 - Build Company: Set job deadline
+- [ ] 3.7 - Build Company: Basic styling customization (colors/fonts)
+- [ ] 3.8 - Backend: Job CRUD endpoints (create, read, update, delete)
+- [ ] 3.9 - Backend: Store custom questions in JSON field
+- [ ] 3.10 - Backend: Job deadline validation
 
-Phase 8 — Security, Compliance & Privacy
-- [ ] Add Terms of Service and Privacy Policy pages
-- [ ] Ensure RBAC and data isolation between companies
-- [ ] Ensure candidate files cannot be downloaded and are view-only within platform
-- [ ] IP logging for submissions; basic log retention policy (MVP: store as needed)
+Phase 4 — Candidate Application Flow
+- [ ] 4.1 - Create Candidate profile form (personal info, education, experience)
+- [ ] 4.2 - Add file upload fields (CV, ID card, military situation)
+- [ ] 4.3 - Implement file validation (type: pdf/doc/docx/jpg/png, size: max 5MB)
+- [ ] 4.4 - Setup Supabase Storage for file uploads
+- [ ] 4.5 - Display dynamic extra questions from job posting
+- [ ] 4.6 - Submit application with IP logging
+- [ ] 4.7 - Backend: Application submission endpoint
+- [ ] 4.8 - Backend: File upload to Supabase Storage
+- [ ] 4.9 - Backend: IP address capture and logging
+- [ ] 4.10 - Prevent candidate from editing after submission
 
-Phase 9 — Testing & QA
-- [ ] Unit tests for core models and APIs
-- [ ] Integration test: candidate submission -> email alerts -> company/admin flow
-- [ ] Manual test checklist: file validation, dead line enforcement, role access control
+Phase 5 — Company: View & Manage Applications
+- [ ] 5.1 - Build Company: View applications table (all applications for their jobs)
+- [ ] 5.2 - Build Company: Filter/search candidates (skills, education, military status)
+- [ ] 5.3 - Build Company: View candidate profile modal (view-only)
+- [ ] 5.4 - Build Company: View uploaded documents (PDF viewer, no download)
+- [ ] 5.5 - Build Company: Accept/Reject buttons for applications
+- [ ] 5.6 - Build Company: Delete application
+- [ ] 5.7 - Backend: Get applications for company endpoint
+- [ ] 5.8 - Backend: Update application status (accept/reject)
+- [ ] 5.9 - Backend: Delete application endpoint
+- [ ] 5.10 - Backend: Secure file viewing (signed URLs, no direct download)
 
-Phase 10 — Deployment & Monitoring (MVP release)
-- [ ] Choose hosting (VPS, PaaS or cloud), provisioning for DB and storage
-- [ ] Add production environment variables and email credentials
-- [ ] Deploy MVP; configure basic logs and alerts for critical failures
+Phase 6 — Email Notifications
+- [ ] 6.1 - Email: New application to company
+- [ ] 6.2 - Email: Application confirmation to candidate
+- [ ] 6.3 - Email: New application alert to admin
+- [ ] 6.4 - Email: Acceptance notification to candidate
+- [ ] 6.5 - Email: Rejection notification to candidate
+- [ ] 6.6 - Email: New company signup to admin
+- [ ] 6.7 - Email templates with bilingual support (FR/EN)
+- [ ] 6.8 - Test all email flows end-to-end
 
-Phase 11 — Post-MVP & Next Features
-- [ ] Evaluate user feedback and metrics
-- [ ] Plan for multi-admin support, analytics, AI matching, premium subscriptions
-- [ ] Convert roadmap to sprints and backlog (issue tickets)
+Phase 7 — Activity Logs & Audit Trail
+- [ ] 7.1 - Backend: Log AdminAction (create/delete company, view applications)
+- [ ] 7.2 - Backend: Log CompanyAction (post job, deactivate account, accept/reject)
+- [ ] 7.3 - Backend: Log IPLog for candidate submissions
+- [ ] 7.4 - Frontend: Admin activity log viewer
+- [ ] 7.5 - Frontend: Company activity log viewer (their own actions)
+- [ ] 7.6 - Add timestamps to all log entries
+
+Phase 8 — UI/UX Polish & Localization
+- [ ] 8.1 - Install react-i18next for internationalization
+- [ ] 8.2 - Create translation files (en.json, fr.json)
+- [ ] 8.3 - Add language switcher component
+- [ ] 8.4 - Translate all UI text (FR/EN)
+- [ ] 8.5 - Apply Tailwind design system from charte graphique
+- [ ] 8.6 - Make all pages responsive (mobile, tablet, desktop)
+- [ ] 8.7 - Add loading states and error messages
+- [ ] 8.8 - Create Help page
+- [ ] 8.9 - Create Contact form (sends email to admin)
+- [ ] 8.10 - Add Terms of Service page
+- [ ] 8.11 - Add Privacy Policy page
+
+Phase 9 — Security & Compliance
+- [ ] 9.1 - Implement RBAC checks on all protected routes
+- [ ] 9.2 - Ensure companies only see their own data
+- [ ] 9.3 - Ensure candidates cannot edit after submission
+- [ ] 9.4 - Disable direct document downloads (view-only with signed URLs)
+- [ ] 9.5 - Add CSRF protection
+- [ ] 9.6 - Add input sanitization (prevent XSS)
+- [ ] 9.7 - Add SQL injection prevention (Prisma handles this)
+- [ ] 9.8 - Environment variables audit (no secrets in code)
+- [ ] 9.9 - Add password strength requirements
+- [ ] 9.10 - Add file upload security (prevent malicious files)
+
+Phase 10 — Testing & QA
+- [ ] 10.1 - Write unit tests for auth endpoints
+- [ ] 10.2 - Write unit tests for job CRUD
+- [ ] 10.3 - Write unit tests for application submission
+- [ ] 10.4 - Write integration test: full candidate flow
+- [ ] 10.5 - Write integration test: company accept/reject flow
+- [ ] 10.6 - Manual test: file validation and size limits
+- [ ] 10.7 - Manual test: email notifications
+- [ ] 10.8 - Manual test: RBAC and permissions
+- [ ] 10.9 - Manual test: responsive design on mobile
+- [ ] 10.10 - Security audit checklist
+
+Phase 11 — Deployment Preparation
+- [ ] 11.1 - Choose hosting provider (Vercel/Railway/DigitalOcean)
+- [ ] 11.2 - Setup production environment variables
+- [ ] 11.3 - Configure Supabase for production
+- [ ] 11.4 - Setup email service for production (SendGrid/Resend)
+- [ ] 11.5 - Create deployment scripts
+- [ ] 11.6 - Setup error logging (Sentry or similar)
+- [ ] 11.7 - Setup monitoring and alerts
+- [ ] 11.8 - Create backup strategy for database
+- [ ] 11.9 - SSL certificate setup
+- [ ] 11.10 - Domain configuration
+
+Phase 12 — MVP Launch
+- [ ] 12.1 - Deploy backend to production
+- [ ] 12.2 - Deploy frontend to production
+- [ ] 12.3 - Run smoke tests on production
+- [ ] 12.4 - Create admin account in production
+- [ ] 12.5 - Test end-to-end flow in production
+- [ ] 12.6 - Monitor logs for first 24 hours
+- [ ] 12.7 - Collect user feedback
+- [ ] 12.8 - Fix critical bugs
+- [ ] 12.9 - Document known issues
+- [ ] 12.10 - Plan post-MVP features
+
+Phase 13 — Post-MVP & Iteration
+- [ ] 13.1 - Evaluate user feedback and metrics
+- [ ] 13.2 - Plan multi-admin support
+- [ ] 13.3 - Plan analytics dashboard
+- [ ] 13.4 - Plan AI candidate matching feature
+- [ ] 13.5 - Plan premium subscription tiers
+- [ ] 13.6 - Plan mobile app (React Native)
+- [ ] 13.7 - Plan advanced search filters
+- [ ] 13.8 - Plan automated email reminders
+- [ ] 13.9 - Plan interview scheduling feature
+- [ ] 13.10 - Convert roadmap to next sprint backlog
 
 Remarks & Acceptance Criteria
 - [ ] Each phase should be tested before moving to the next. For MVP, the following are required before release: authentication & roles, company/job posting, candidate submission + email notifications, admin management, files view-only, and basic UI localization.

@@ -1,0 +1,254 @@
+# CHARTE GRAPHIQUE - RECRUITMENT SAAS PLATFORM
+## Identité Visuelle et Design System
+
+===============================================================================
+📊 PALETTE DE COULEURS
+===============================================================================
+
+### Couleurs Principales
+---------------------------
+🔵 Bleu Principal (Primary)
+  - HEX: #0052CC
+  - RGB: rgb(0, 82, 204)
+  - Usage: Boutons CTA, liens, titres importants, éléments interactifs
+
+🟦 Bleu Secondaire (Secondary)
+  - HEX: #0747A6
+  - RGB: rgb(7, 71, 166)
+  - Usage: Hover states, accents, badges de statut
+
+### Couleurs d'Accentuation
+---------------------------
+🟩 Vert Succès (Success)
+  - HEX: #36B37E
+  - RGB: rgb(54, 179, 126)
+  - Usage: Notifications de succès, validations, candidatures acceptées
+
+🟨 Jaune Attention (Warning)
+  - HEX: #FFAB00
+  - RGB: rgb(255, 171, 0)
+  - Usage: Alertes, candidatures en attente, notifications importantes
+
+🟥 Rouge Erreur (Error)
+  - HEX: #DE350B
+  - RGB: rgb(222, 53, 11)
+  - Usage: Erreurs, candidatures rejetées, actions destructives
+
+🟪 Violet Info (Info)
+  - HEX: #6554C0
+  - RGB: rgb(101, 84, 192)
+  - Usage: Informations, tooltips, notifications système
+
+### Couleurs Neutres
+---------------------------
+⬛ Noir Texte (Text Primary)
+  - HEX: #172B4D
+  - RGB: rgb(23, 43, 77)
+  - Usage: Texte principal, titres
+
+⬜ Gris Foncé (Text Secondary)
+  - HEX: #5E6C84
+  - RGB: rgb(94, 108, 132)
+  - Usage: Texte secondaire, labels, descriptions
+
+⬜ Gris Moyen (Border)
+  - HEX: #DFE1E6
+  - RGB: rgb(223, 225, 230)
+  - Usage: Bordures, séparateurs, contours
+
+⬜ Gris Clair (Background)
+  - HEX: #F4F5F7
+  - RGB: rgb(244, 245, 247)
+  - Usage: Arrière-plans, cartes, sections
+
+⬜ Blanc (White)
+  - HEX: #FFFFFF
+  - RGB: rgb(255, 255, 255)
+  - Usage: Fond principal, cartes en relief
+
+===============================================================================
+🎨 POLICES (FONTS)
+===============================================================================
+
+### Police Principale - INTER
+---------------------------
+Source: Google Fonts
+URL: https://fonts.google.com/specimen/Inter
+Weights à utiliser:
+  - Light (300): Textes de grande taille, citations
+  - Regular (400): Corps de texte standard
+  - Medium (500): Boutons, labels importants
+  - SemiBold (600): Sous-titres, navigation
+  - Bold (700): Titres H2, H3
+  - ExtraBold (800): Titres H1, headers
+
+Usage:
+  - Titres: Inter Bold/ExtraBold
+  - Corps de texte: Inter Regular
+  - Boutons/CTA: Inter Medium/SemiBold
+  - Navigation: Inter SemiBold
+
+### Police Secondaire - POPPINS (Optionnel)
+---------------------------
+Source: Google Fonts
+URL: https://fonts.google.com/specimen/Poppins
+Weights à utiliser:
+  - SemiBold (600): Titres alternatifs
+  - Bold (700): Headers spéciaux
+
+Usage:
+  - Logo text
+  - Titres marketing
+  - Landing pages
+
+### Police Monospace - FIRA CODE
+---------------------------
+Source: Google Fonts
+URL: https://fonts.google.com/specimen/Fira+Code
+Weight: Regular (400)
+
+Usage:
+  - Code snippets
+  - Identifiants techniques
+  - Emails, numéros de référence
+
+===============================================================================
+🖼️ LOGO - PROMPT DE GÉNÉRATION
+===============================================================================
+
+### Prompt pour DALL-E / Midjourney / Stable Diffusion:
+---------------------------
+
+"Create a modern, professional logo for a recruitment SaaS platform named 
+'RecruitHub' (or [YOUR_PLATFORM_NAME]). The logo should feature:
+
+- A minimalist design combining geometric shapes
+- Abstract representation of connection/networking (nodes, lines, or pathways)
+- Color scheme: Primary blue (#0052CC) and vibrant green (#36B37E)
+- Clean, contemporary style suitable for B2B software
+- Scalable design that works in both large and small sizes
+- Optional: subtle integration of briefcase or person silhouette
+- Style: Flat design, vector-ready, professional corporate aesthetic
+- No gradients, solid colors only
+- Should convey: trust, efficiency, innovation, growth
+
+Output formats needed:
+- SVG vector format
+- PNG with transparent background (1000x1000px)
+- Favicon version (512x512px)
+- Variations: full color, monochrome, white on dark background"
+
+### Alternative Prompt (Plus Spécifique):
+---------------------------
+
+"Design a modern SaaS company logo for a recruitment platform. Features:
+- Symbol: Interconnected hexagons forming a network pattern
+- Colors: Deep blue (#0052CC) as primary, emerald green (#36B37E) as accent
+- Typography: Bold, clean sans-serif wordmark below the symbol
+- Style: Minimal, geometric, tech-forward
+- Must work on white background and dark mode (#172B4D)
+- Inspirations: LinkedIn, Workday, Greenhouse (but unique)
+- Avoid: clichés like handshakes, ties, traditional briefcases
+- Convey: AI-powered, modern, efficient, trustworthy"
+
+===============================================================================
+📐 DESIGN SYSTEM GUIDELINES
+===============================================================================
+
+### Espacement (Spacing)
+---------------------------
+- Base unit: 8px
+- Spacing scale: 4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px
+
+### Border Radius
+---------------------------
+- Small: 4px (inputs, tags)
+- Medium: 8px (buttons, cards)
+- Large: 12px (modals, sections)
+- Extra Large: 16px (hero sections)
+
+### Shadows (Elevation)
+---------------------------
+- Low: 0 1px 3px rgba(0,0,0,0.08)
+- Medium: 0 4px 8px rgba(0,0,0,0.12)
+- High: 0 8px 16px rgba(0,0,0,0.16)
+
+### Typographie Scale
+---------------------------
+- H1: 36px / Inter ExtraBold / Line height 1.2
+- H2: 28px / Inter Bold / Line height 1.3
+- H3: 22px / Inter Bold / Line height 1.4
+- H4: 18px / Inter SemiBold / Line height 1.4
+- Body Large: 16px / Inter Regular / Line height 1.6
+- Body: 14px / Inter Regular / Line height 1.6
+- Small: 12px / Inter Regular / Line height 1.5
+
+### Boutons (Buttons)
+---------------------------
+- Primary: Fond #0052CC, texte blanc, hover #0747A6
+- Secondary: Fond transparent, border #0052CC, texte #0052CC
+- Success: Fond #36B37E, texte blanc
+- Danger: Fond #DE350B, texte blanc
+- Height: 40px (medium), padding: 12px 24px
+
+===============================================================================
+🎯 IMPLEMENTATION DANS LE CODE
+===============================================================================
+
+### Tailwind Config Colors:
+---------------------------
+colors: {
+  primary: '#0052CC',
+  secondary: '#0747A6',
+  success: '#36B37E',
+  warning: '#FFAB00',
+  error: '#DE350B',
+  info: '#6554C0',
+  text: {
+    primary: '#172B4D',
+    secondary: '#5E6C84',
+  },
+  border: '#DFE1E6',
+  background: '#F4F5F7',
+}
+
+### CSS Variables:
+---------------------------
+:root {
+  --color-primary: #0052CC;
+  --color-secondary: #0747A6;
+  --color-success: #36B37E;
+  --color-warning: #FFAB00;
+  --color-error: #DE350B;
+  --color-info: #6554C0;
+  --color-text-primary: #172B4D;
+  --color-text-secondary: #5E6C84;
+  --color-border: #DFE1E6;
+  --color-background: #F4F5F7;
+  
+  --font-primary: 'Inter', sans-serif;
+  --font-secondary: 'Poppins', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+}
+
+===============================================================================
+📱 RESPONSIVE & DARK MODE
+===============================================================================
+
+### Breakpoints:
+- Mobile: 0-640px
+- Tablet: 641-1024px
+- Desktop: 1025px+
+
+### Dark Mode Colors:
+- Background: #0A0E27 (from README animation)
+- Surface: #1A1F3A
+- Text Primary: #FFFFFF
+- Text Secondary: #B0B8C9
+- Border: #2D3448
+
+===============================================================================
+
+Date de création: 17 Novembre 2025
+Version: 1.0
+Statut: Active
