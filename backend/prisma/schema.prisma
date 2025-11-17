@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Admin {
@@ -15,15 +16,16 @@ model Admin {
 }
 
 model Company {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  active    Boolean  @default(true)
-  styling   Json?
-  createdAt DateTime @default(now())
-  jobs      Job[]
-  actions   CompanyAction[]
+  id           Int              @id @default(autoincrement())
+  name         String
+  email        String           @unique
+  password     String
+  active       Boolean          @default(true)
+  styling      Json?
+  createdAt    DateTime         @default(now())
+  jobs         Job[]
+  actions      CompanyAction[]
+  applications Application[]
 }
 
 model Job {
@@ -77,6 +79,7 @@ model AdminAction {
 model CompanyAction {
   id        Int      @id @default(autoincrement())
   companyId Int
+  company   Company  @relation(fields: [companyId], references: [id])
   action    String
   details   String?
   createdAt DateTime @default(now())

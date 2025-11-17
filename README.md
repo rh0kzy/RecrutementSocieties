@@ -19,13 +19,7 @@
   
   <text x="400" y="120" font-family="Arial, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="url(#grad1)" letter-spacing="8">
     COMING SOON
-    <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite"/>
-    <animateTransform attributeName="transform" type="translate" values="0,0;0,-8;0,0" dur="2.5s" repeatCount="indefinite"/>
-  </text>
-  
-  <text x="400" y="120" font-family="Arial, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="url(#grad1)" letter-spacing="8" opacity="0.3" filter="blur(8px)">
-    COMING SOON
-    <animate attributeName="opacity" values="0.2;0.5;0.2" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/>
   </text>
 </svg>
 
