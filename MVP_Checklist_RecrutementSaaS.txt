@@ -283,7 +283,7 @@ Phase 2 — Admin Dashboard & Company Management
 - [x] 2.1 - Create Admin dashboard layout with navigation
 - [x] 2.2 - Build Admin: View all companies (table with search/filter)
 - [x] 2.3 - Build Admin: Create new company account
-- [ ] 2.4 - Build Admin: Deactivate/activate company
+- [x] 2.4 - Build Admin: Deactivate/activate company
 - [ ] 2.5 - Build Admin: Reset company password
 - [ ] 2.6 - Build Admin: View all applications across companies
 - [ ] 2.7 - Build Admin: Activity logs viewer

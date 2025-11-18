@@ -102,14 +102,45 @@ const AdminDashboard: React.FC = () => {
 
   // Update company status
   const updateCompanyStatus = async (companyId: string, newStatus: string) => {
+    const previousStatus = companies.find(c => c.id === companyId)?.status;
+    
     try {
+      // Optimistic update
+      setCompanies(companies.map(c => 
+        c.id === companyId ? { ...c, status: newStatus as 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' } : c
+      ));
+
       await axios.patch(`/api/companies/${companyId}/status`, {
         status: newStatus,
       });
-      fetchCompanies(); // Refresh the list
-    } catch (error) {
+
+      // Show success message
+      const statusLabel = newStatus === 'ACTIVE' ? 'activated' : newStatus === 'INACTIVE' ? 'deactivated' : 'suspended';
+      showNotification(`Company ${statusLabel} successfully`, 'success');
+      
+      fetchCompanies(); // Refresh to ensure consistency
+      fetchStats(); // Update stats
+    } catch (error: any) {
       console.error('Error updating company status:', error);
-      alert('Failed to update company status');
+      
+      // Revert optimistic update
+      if (previousStatus) {
+        setCompanies(companies.map(c => 
+          c.id === companyId ? { ...c, status: previousStatus } : c
+        ));
+      }
+      
+      showNotification(error.response?.data?.error || 'Failed to update company status', 'error');
+    }
+  };
+
+  // Notification helper
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    // Simple alert for now - can be replaced with a toast library later
+    if (type === 'success') {
+      alert(`✅ ${message}`);
+    } else {
+      alert(`❌ ${message}`);
     }
   };
 
@@ -462,20 +493,32 @@ const AdminDashboard: React.FC = () => {
                               {new Date(company.createdAt).toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <div className="flex justify-end gap-2">
-                                <select
-                                  value={company.status}
-                                  onChange={(e) => updateCompanyStatus(company.id, e.target.value)}
-                                  className="text-xs px-2 py-1 border border-[#DFE1E6] rounded focus:outline-none focus:ring-2 focus:ring-[#0052CC]"
-                                >
-                                  <option value="ACTIVE">Active</option>
-                                  <option value="INACTIVE">Inactive</option>
-                                  <option value="SUSPENDED">Suspend</option>
-                                </select>
+                              <div className="flex justify-end gap-2 items-center">
+                                <div className="relative group">
+                                  <select
+                                    value={company.status}
+                                    onChange={(e) => updateCompanyStatus(company.id, e.target.value)}
+                                    className={`text-xs px-3 py-1.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0052CC] transition-all cursor-pointer font-medium ${
+                                      company.status === 'ACTIVE'
+                                        ? 'border-[#36B37E] text-[#36B37E] hover:bg-[#E3FCEF]'
+                                        : company.status === 'SUSPENDED'
+                                        ? 'border-[#DE350B] text-[#DE350B] hover:bg-[#FFEBE6]'
+                                        : 'border-[#5E6C84] text-[#5E6C84] hover:bg-[#F4F5F7]'
+                                    }`}
+                                    title="Change company status"
+                                  >
+                                    <option value="ACTIVE">✓ Active</option>
+                                    <option value="INACTIVE">○ Inactive</option>
+                                    <option value="SUSPENDED">✕ Suspended</option>
+                                  </select>
+                                  <div className="absolute bottom-full mb-2 hidden group-hover:block bg-[#172B4D] text-white text-xs rounded py-1 px-2 whitespace-nowrap z-10">
+                                    Click to change status
+                                  </div>
+                                </div>
                                 <button
                                   onClick={() => deleteCompany(company.id)}
-                                  className="text-[#DE350B] hover:text-[#BF2600] transition-colors"
-                                  title="Delete company"
+                                  className="text-[#DE350B] hover:text-[#BF2600] hover:bg-[#FFEBE6] p-2 rounded-lg transition-all"
+                                  title="Delete company permanently"
                                 >
                                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
