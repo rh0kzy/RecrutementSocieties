@@ -288,20 +288,20 @@ Phase 2 — Admin Dashboard & Company Management
 - [x] 2.6 - Build Admin: View all applications across companies
 - [x] 2.7 - Build Admin: Activity logs viewer
 - [x] 2.8 - Build Admin: Dashboard stats (total companies, applications)
-- [ ] 2.9 - Backend: Admin CRUD endpoints for companies
-- [ ] 2.10 - Backend: Admin view all applications endpoint
+- [x] 2.9 - Backend: Admin CRUD endpoints for companies
+- [x] 2.10 - Backend: Admin view all applications endpoint
 
 Phase 3 — Company Dashboard & Job Posting
-- [ ] 3.1 - Create Company dashboard layout with navigation
-- [ ] 3.2 - Build Company: Profile settings page
-- [ ] 3.3 - Build Company: Create job posting form
-- [ ] 3.4 - Build Company: View/edit/delete jobs table
-- [ ] 3.5 - Build Company: Add custom questions to job form
-- [ ] 3.6 - Build Company: Set job deadline
-- [ ] 3.7 - Build Company: Basic styling customization (colors/fonts)
-- [ ] 3.8 - Backend: Job CRUD endpoints (create, read, update, delete)
-- [ ] 3.9 - Backend: Store custom questions in JSON field
-- [ ] 3.10 - Backend: Job deadline validation
+- [x] 3.1 - Create Company dashboard layout with navigation
+- [x] 3.2 - Build Company: Profile settings page
+- [x] 3.3 - Build Company: Create job posting form
+- [x] 3.4 - Build Company: View/edit/delete jobs table
+- [x] 3.5 - Build Company: Add custom questions to job form
+- [x] 3.6 - Build Company: Set job deadline
+- [x] 3.7 - Build Company: styling customization (colors/fonts)
+- [x] 3.8 - Backend: Job CRUD endpoints (create, read, update, delete)
+- [x] 3.9 - Backend: Store custom questions in JSON field
+- [x] 3.10 - Backend: Job deadline validation
 
 Phase 4 — Candidate Application Flow
 - [ ] 4.1 - Create Candidate profile form (personal info, education, experience)
