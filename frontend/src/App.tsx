@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import CompanySignup from './pages/CompanySignup';
 import CandidateSignup from './pages/CandidateSignup';
 import Signup from './pages/Signup';
+import JobApplication from './pages/JobApplication';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CompanyDashboard from './pages/company/CompanyDashboard';
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/company/signup" element={<CompanySignup />} />
           <Route path="/signup/candidate" element={<CandidateSignup />} />
           <Route path="/candidate/signup" element={<CandidateSignup />} />
+          <Route path="/job/:jobId/apply" element={<JobApplication />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
