@@ -175,7 +175,7 @@ Files & Storage
 - [ ] Encrypted storage or at least secure file permissions for saved files
 - [ ] Validate file types (e.g., pdf, doc, docx, jpg, png) and file size limits
 - [ ] Prevent file download, allow view-only interface
-- [x] Use Supabase Storage as the primary file storage (optional for MVP)
+- [x] Use Backblaze B2 as the primary file storage (migrated from Supabase)
 
 UI/UX
 - [ ] Login pages (Admin/Company/Candidate) (bilingual support)
@@ -309,10 +309,10 @@ Phase 4 — Candidate Application Flow
 - [x] 4.3 - Implement file validation (type: pdf/doc/docx/jpg/png, size: max 5MB)
 - [x] 4.4 - Setup Supabase Storage for file uploads
 - [x] 4.5 - Display dynamic extra questions from job posting
-- [ ] 4.6 - Submit application with IP logging
-- [ ] 4.7 - Backend: Application submission endpoint
-- [ ] 4.8 - Backend: File upload to Supabase Storage
-- [ ] 4.9 - Backend: IP address capture and logging
+- [x] 4.6 - Submit application with IP logging
+- [x] 4.7 - Backend: Application submission endpoint
+- [x] 4.8 - Backend: File upload to Backblaze B2 Storage
+- [x] 4.9 - Backend: IP address capture and logging
 - [ ] 4.10 - Prevent candidate from editing after submission
 
 Phase 5 — Company: View & Manage Applications
