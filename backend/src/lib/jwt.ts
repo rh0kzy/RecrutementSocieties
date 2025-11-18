@@ -74,3 +74,20 @@ export const authorize = (...roles: Array<'ADMIN' | 'COMPANY' | 'CANDIDATE'>) =>
     next();
   };
 };
+
+/**
+ * Middleware factory to require specific roles
+ */
+export const requireRole = (roles: Array<'ADMIN' | 'COMPANY' | 'CANDIDATE'>) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
+    }
+
+    next();
+  };
+};

@@ -36,17 +36,31 @@ model Admin {
 }
 
 model Company {
-  id        Int      @id @default(autoincrement())
-  name      String
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int      @unique
-  active    Boolean  @default(true)
-  styling   Json?
-  createdAt DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  companyName   String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int      @unique
+  status        CompanyStatus @default(ACTIVE)
+  paymentStatus PaymentStatus @default(PENDING)
+  styling       Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   jobs         Job[]
   actions      CompanyAction[]
   applications Application[]
+}
+
+enum CompanyStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  FAILED
 }
 
 model Job {

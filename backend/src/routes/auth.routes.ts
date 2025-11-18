@@ -54,7 +54,7 @@ router.post('/signup', validate(signupSchema), async (req, res) => {
             password: hashedPassword,
             role: 'COMPANY',
             company: {
-              create: { name: companyName },
+              create: { companyName },
             },
           },
         });
@@ -185,11 +185,8 @@ router.post('/forgot-password', validate(forgotPasswordSchema), async (req, res)
       },
     });
 
-    // Construct reset URL
-    // IMPORTANT: The frontend URL should come from an environment variable
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
-
-    await sendPasswordResetEmail(user.email, resetUrl);
+    // Send password reset email with token and role
+    await sendPasswordResetEmail(user.email, resetToken, user.role as 'ADMIN' | 'COMPANY' | 'CANDIDATE');
 
     res.json({ success: true, message: 'If an account with this email exists, a password reset link has been sent.' });
 

@@ -280,8 +280,8 @@ PRIORITY 4: Input Validation & Security
 ----------------------------------------
 
 Phase 2 — Admin Dashboard & Company Management
-- [ ] 2.1 - Create Admin dashboard layout with navigation
-- [ ] 2.2 - Build Admin: View all companies (table with search/filter)
+- [x] 2.1 - Create Admin dashboard layout with navigation
+- [x] 2.2 - Build Admin: View all companies (table with search/filter)
 - [ ] 2.3 - Build Admin: Create new company account
 - [ ] 2.4 - Build Admin: Deactivate/activate company
 - [ ] 2.5 - Build Admin: Reset company password
