@@ -304,7 +304,7 @@ Phase 3 — Company Dashboard & Job Posting
 - [x] 3.10 - Backend: Job deadline validation
 
 Phase 4 — Candidate Application Flow
-- [ ] 4.1 - Create Candidate profile form (personal info, education, experience)
+- [x] 4.1 - Create Candidate profile form (personal info, education, experience)
 - [ ] 4.2 - Add file upload fields (CV, ID card, military situation)
 - [ ] 4.3 - Implement file validation (type: pdf/doc/docx/jpg/png, size: max 5MB)
 - [ ] 4.4 - Setup Supabase Storage for file uploads
