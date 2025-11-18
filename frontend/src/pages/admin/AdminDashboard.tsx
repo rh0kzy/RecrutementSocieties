@@ -55,6 +55,18 @@ const AdminDashboard: React.FC = () => {
   const [createError, setCreateError] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
 
+  // Reset password modal state
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [resetPasswordData, setResetPasswordData] = useState({
+    companyId: '',
+    companyName: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [resetPasswordError, setResetPasswordError] = useState('');
+  const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -212,6 +224,71 @@ const AdminDashboard: React.FC = () => {
       status: 'ACTIVE',
       paymentStatus: 'PENDING',
     });
+  };
+
+  // Open reset password modal
+  const openResetPasswordModal = (company: Company) => {
+    setResetPasswordData({
+      companyId: company.id,
+      companyName: company.companyName,
+      newPassword: '',
+      confirmPassword: '',
+    });
+    setResetPasswordError('');
+    setIsResetPasswordModalOpen(true);
+  };
+
+  // Close reset password modal
+  const handleCloseResetPasswordModal = () => {
+    setIsResetPasswordModalOpen(false);
+    setResetPasswordData({
+      companyId: '',
+      companyName: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+    setResetPasswordError('');
+    setShowPassword(false);
+  };
+
+  // Reset company password
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetPasswordError('');
+    setResetPasswordLoading(true);
+
+    // Validation
+    if (!resetPasswordData.newPassword || !resetPasswordData.confirmPassword) {
+      setResetPasswordError('All fields are required');
+      setResetPasswordLoading(false);
+      return;
+    }
+
+    if (resetPasswordData.newPassword.length < 6) {
+      setResetPasswordError('Password must be at least 6 characters long');
+      setResetPasswordLoading(false);
+      return;
+    }
+
+    if (resetPasswordData.newPassword !== resetPasswordData.confirmPassword) {
+      setResetPasswordError('Passwords do not match');
+      setResetPasswordLoading(false);
+      return;
+    }
+
+    try {
+      await axios.post(`/api/companies/${resetPasswordData.companyId}/reset-password`, {
+        newPassword: resetPasswordData.newPassword,
+      });
+      
+      showNotification(`Password reset successfully for ${resetPasswordData.companyName}`, 'success');
+      handleCloseResetPasswordModal();
+    } catch (error: any) {
+      console.error('Error resetting password:', error);
+      setResetPasswordError(error.response?.data?.error || 'Failed to reset password');
+    } finally {
+      setResetPasswordLoading(false);
+    }
   };
 
   // Effects
@@ -515,6 +592,15 @@ const AdminDashboard: React.FC = () => {
                                     Click to change status
                                   </div>
                                 </div>
+                                <button
+                                  onClick={() => openResetPasswordModal(company)}
+                                  className="text-[#6554C0] hover:text-[#5243AA] hover:bg-[#EAE6FF] p-2 rounded-lg transition-all"
+                                  title="Reset company password"
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                  </svg>
+                                </button>
                                 <button
                                   onClick={() => deleteCompany(company.id)}
                                   className="text-[#DE350B] hover:text-[#BF2600] hover:bg-[#FFEBE6] p-2 rounded-lg transition-all"
@@ -887,6 +973,141 @@ const AdminDashboard: React.FC = () => {
                     </span>
                   ) : (
                     'Create Company'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {isResetPasswordModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-[#6554C0] to-[#5243AA] px-6 py-4 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-white">Reset Password</h3>
+                  <p className="text-white/80 text-sm mt-1">{resetPasswordData.companyName}</p>
+                </div>
+                <button
+                  onClick={handleCloseResetPasswordModal}
+                  className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleResetPassword} className="p-6 space-y-4">
+              {/* Error Message */}
+              {resetPasswordError && (
+                <div className="bg-red-50 border-l-4 border-[#DE350B] p-4 rounded-r-lg">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-[#DE350B] mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-[#DE350B] text-sm font-medium">{resetPasswordError}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Info Message */}
+              <div className="bg-blue-50 border-l-4 border-[#0052CC] p-4 rounded-r-lg">
+                <div className="flex">
+                  <svg className="w-5 h-5 text-[#0052CC] mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-[#0052CC] text-sm">
+                    This will reset the password for this company account. The company will need to use the new password to login.
+                  </span>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div>
+                <label htmlFor="newPassword" className="block text-sm font-semibold text-[#172B4D] mb-2">
+                  New Password *
+                </label>
+                <div className="relative">
+                  <input
+                    id="newPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    value={resetPasswordData.newPassword}
+                    onChange={(e) => setResetPasswordData({ ...resetPasswordData, newPassword: e.target.value })}
+                    className="w-full px-4 py-2 pr-12 border-2 border-gray-200 rounded-lg focus:border-[#6554C0] focus:ring-4 focus:ring-purple-50 transition-all outline-none"
+                    placeholder="Enter new password"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#5E6C84] hover:text-[#172B4D] transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-[#5E6C84] mt-1">Must be at least 6 characters long</p>
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-[#172B4D] mb-2">
+                  Confirm Password *
+                </label>
+                <input
+                  id="confirmPassword"
+                  type={showPassword ? 'text' : 'password'}
+                  value={resetPasswordData.confirmPassword}
+                  onChange={(e) => setResetPasswordData({ ...resetPasswordData, confirmPassword: e.target.value })}
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#6554C0] focus:ring-4 focus:ring-purple-50 transition-all outline-none"
+                  placeholder="Confirm new password"
+                  required
+                  minLength={6}
+                />
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={handleCloseResetPasswordModal}
+                  className="flex-1 px-4 py-2 border-2 border-gray-300 text-[#5E6C84] font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                  disabled={resetPasswordLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-[#6554C0] hover:bg-[#5243AA] text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={resetPasswordLoading}
+                >
+                  {resetPasswordLoading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Resetting...
+                    </span>
+                  ) : (
+                    'Reset Password'
                   )}
                 </button>
               </div>
