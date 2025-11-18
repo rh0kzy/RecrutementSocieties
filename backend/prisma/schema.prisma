@@ -82,6 +82,7 @@ model Candidate {
   user      User     @relation(fields: [userId], references: [id])
   userId    Int      @unique
   profile   Json?
+  submitted Boolean  @default(false)
   createdAt DateTime @default(now())
 
   ipLogs       IPLog[]

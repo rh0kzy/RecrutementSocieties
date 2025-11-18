@@ -28,7 +28,8 @@ router.get('/profile', authenticate, requireRole(['CANDIDATE']), async (req, res
       firstName: candidate.firstName,
       lastName: candidate.lastName,
       email: candidate.user.email,
-      profile: candidate.profile || {}
+      profile: candidate.profile || {},
+      submitted: candidate.submitted
     });
   } catch (error) {
     console.error('Error fetching candidate profile:', error);
@@ -45,6 +46,19 @@ router.put('/profile', authenticate, requireRole(['CANDIDATE']), async (req, res
     // Validate required fields
     if (!firstName || !lastName) {
       return res.status(400).json({ error: 'First name and last name are required' });
+    }
+
+    // Check if candidate has already submitted an application
+    const candidate = await prisma.candidate.findUnique({
+      where: { userId: user.id }
+    });
+
+    if (!candidate) {
+      return res.status(404).json({ error: 'Candidate not found' });
+    }
+
+    if (candidate.submitted) {
+      return res.status(403).json({ error: 'Profile cannot be edited after application submission' });
     }
 
     // Update candidate profile
@@ -67,7 +81,8 @@ router.put('/profile', authenticate, requireRole(['CANDIDATE']), async (req, res
       firstName: updatedCandidate.firstName,
       lastName: updatedCandidate.lastName,
       email: updatedCandidate.user.email,
-      profile: updatedCandidate.profile || {}
+      profile: updatedCandidate.profile || {},
+      submitted: updatedCandidate.submitted
     });
   } catch (error) {
     console.error('Error updating candidate profile:', error);

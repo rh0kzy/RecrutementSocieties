@@ -129,6 +129,7 @@ router.post('/', authenticate, requireRole(['CANDIDATE']), async (req, res) => {
       data: {
         firstName: profile.firstName,
         lastName: profile.lastName,
+        submitted: true,
         profile: {
           phone: profile.phone || null,
           address: profile.address || null,

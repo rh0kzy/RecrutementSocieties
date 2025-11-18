@@ -313,7 +313,7 @@ Phase 4 — Candidate Application Flow
 - [x] 4.7 - Backend: Application submission endpoint
 - [x] 4.8 - Backend: File upload to Backblaze B2 Storage
 - [x] 4.9 - Backend: IP address capture and logging
-- [ ] 4.10 - Prevent candidate from editing after submission
+- [x] 4.10 - Prevent candidate from editing after submission
 
 Phase 5 — Company: View & Manage Applications
 - [ ] 5.1 - Build Company: View applications table (all applications for their jobs)

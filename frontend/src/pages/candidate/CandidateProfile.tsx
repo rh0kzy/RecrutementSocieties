@@ -59,6 +59,7 @@ const CandidateProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -84,6 +85,7 @@ const CandidateProfile: React.FC = () => {
         idCardUrl: data.profile?.idCardUrl || '',
         militaryStatusUrl: data.profile?.militaryStatusUrl || ''
       });
+      setSubmitted(data.submitted || false);
     } catch (err) {
       console.error('Error fetching profile:', err);
       setError('Failed to load profile');
@@ -286,7 +288,8 @@ const CandidateProfile: React.FC = () => {
                 type="text"
                 value={profile.firstName}
                 onChange={(e) => setProfile(prev => ({ ...prev, firstName: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                disabled={submitted}
                 required
               />
             </div>
@@ -298,7 +301,8 @@ const CandidateProfile: React.FC = () => {
                 type="text"
                 value={profile.lastName}
                 onChange={(e) => setProfile(prev => ({ ...prev, lastName: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                disabled={submitted}
                 required
               />
             </div>
@@ -321,7 +325,8 @@ const CandidateProfile: React.FC = () => {
                 type="tel"
                 value={profile.phone}
                 onChange={(e) => setProfile(prev => ({ ...prev, phone: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                disabled={submitted}
               />
             </div>
             <div className="md:col-span-2">
@@ -332,7 +337,8 @@ const CandidateProfile: React.FC = () => {
                 type="text"
                 value={profile.address}
                 onChange={(e) => setProfile(prev => ({ ...prev, address: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                disabled={submitted}
               />
             </div>
             <div>
@@ -343,7 +349,8 @@ const CandidateProfile: React.FC = () => {
                 type="date"
                 value={profile.dateOfBirth}
                 onChange={(e) => setProfile(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                disabled={submitted}
               />
             </div>
           </div>
@@ -354,7 +361,8 @@ const CandidateProfile: React.FC = () => {
             <h2 className="text-xl font-semibold text-text-primary">Education</h2>
             <button
               onClick={addEducation}
-              className="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-xl text-sm"
+              disabled={submitted}
+              className="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Add Education
             </button>
@@ -374,7 +382,8 @@ const CandidateProfile: React.FC = () => {
                         type="text"
                         value={edu.degree}
                         onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                        disabled={submitted}
                         placeholder="e.g., Bachelor's in Computer Science"
                       />
                     </div>
@@ -386,7 +395,8 @@ const CandidateProfile: React.FC = () => {
                         type="text"
                         value={edu.institution}
                         onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                        disabled={submitted}
                         placeholder="e.g., University of Example"
                       />
                     </div>
@@ -398,7 +408,8 @@ const CandidateProfile: React.FC = () => {
                         type="number"
                         value={edu.graduationYear}
                         onChange={(e) => updateEducation(edu.id, 'graduationYear', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                        disabled={submitted}
                         placeholder="e.g., 2024"
                         min="1950"
                         max="2030"
@@ -412,7 +423,8 @@ const CandidateProfile: React.FC = () => {
                         type="text"
                         value={edu.gpa || ''}
                         onChange={(e) => updateEducation(edu.id, 'gpa', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                        disabled={submitted}
                         placeholder="e.g., 3.8"
                       />
                     </div>
@@ -436,7 +448,8 @@ const CandidateProfile: React.FC = () => {
             <h2 className="text-xl font-semibold text-text-primary">Work Experience</h2>
             <button
               onClick={addExperience}
-              className="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-xl text-sm"
+              disabled={submitted}
+              className="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Add Experience
             </button>
@@ -456,7 +469,8 @@ const CandidateProfile: React.FC = () => {
                         type="text"
                         value={exp.jobTitle}
                         onChange={(e) => updateExperience(exp.id, 'jobTitle', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                        disabled={submitted}
                         placeholder="e.g., Software Developer"
                       />
                     </div>
@@ -468,8 +482,9 @@ const CandidateProfile: React.FC = () => {
                         type="text"
                         value={exp.company}
                         onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
-                        placeholder="e.g., Tech Corp"
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                        disabled={submitted}
+                        placeholder="e.g., Tech Company Inc."
                       />
                     </div>
                     <div>
@@ -480,7 +495,8 @@ const CandidateProfile: React.FC = () => {
                         type="date"
                         value={exp.startDate}
                         onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                        disabled={submitted}
                       />
                     </div>
                     <div>
@@ -491,8 +507,8 @@ const CandidateProfile: React.FC = () => {
                         type="date"
                         value={exp.endDate}
                         onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
-                        disabled={exp.current}
-                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover"
+                        disabled={exp.current || submitted}
+                        className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
                       />
                     </div>
                   </div>
@@ -502,7 +518,8 @@ const CandidateProfile: React.FC = () => {
                         type="checkbox"
                         checked={exp.current}
                         onChange={(e) => updateExperience(exp.id, 'current', e.target.checked)}
-                        className="mr-2"
+                        disabled={submitted}
+                        className="mr-2 disabled:cursor-not-allowed"
                       />
                       <span className="text-sm text-text-secondary">I currently work here</span>
                     </label>
@@ -515,7 +532,8 @@ const CandidateProfile: React.FC = () => {
                       value={exp.description}
                       onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
                       rows={3}
-                      className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary"
+                      className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary disabled:bg-surface-hover disabled:cursor-not-allowed"
+                      disabled={submitted}
                       placeholder="Describe your responsibilities and achievements..."
                     />
                   </div>
@@ -544,7 +562,8 @@ const CandidateProfile: React.FC = () => {
                 type="file"
                 accept=".pdf,.doc,.docx"
                 onChange={handleFileChange('cv')}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                disabled={submitted}
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {profile.cvUrl && (
                 <p className="text-sm text-text-muted mt-1">
@@ -562,7 +581,8 @@ const CandidateProfile: React.FC = () => {
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={handleFileChange('idCard')}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                disabled={submitted}
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {profile.idCardUrl && (
                 <p className="text-sm text-text-muted mt-1">
@@ -580,7 +600,8 @@ const CandidateProfile: React.FC = () => {
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={handleFileChange('militaryStatus')}
-                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                disabled={submitted}
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               {profile.militaryStatusUrl && (
                 <p className="text-sm text-text-muted mt-1">
@@ -593,12 +614,17 @@ const CandidateProfile: React.FC = () => {
         </div>
 
         <div className="flex justify-end">
+          {submitted && (
+            <div className="mr-4 text-warning font-medium">
+              Profile cannot be edited after application submission
+            </div>
+          )}
           <button
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || submitted}
             className="bg-success hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl disabled:opacity-50"
           >
-            {saving ? 'Saving...' : 'Save Profile'}
+            {saving ? 'Saving...' : submitted ? 'Profile Locked' : 'Save Profile'}
           </button>
         </div>
       </div>
