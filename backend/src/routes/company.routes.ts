@@ -6,6 +6,71 @@ const prisma = new PrismaClient();
 const router = express.Router();
 
 // ========================================
+// ADMIN: Get dashboard statistics
+// ========================================
+router.get('/stats/dashboard', authenticate, requireRole(['ADMIN']), async (req: AuthRequest, res) => {
+  try {
+    // Get company counts
+    const [totalCompanies, activeCompanies, inactiveCompanies, suspendedCompanies] = await Promise.all([
+      prisma.company.count(),
+      prisma.company.count({ where: { status: 'ACTIVE' } }),
+      prisma.company.count({ where: { status: 'INACTIVE' } }),
+      prisma.company.count({ where: { status: 'SUSPENDED' } }),
+    ]);
+
+    // Get application counts
+    const [totalApplications, pendingApplications, acceptedApplications, rejectedApplications] = await Promise.all([
+      prisma.application.count(),
+      prisma.application.count({ where: { status: 'PENDING' } }),
+      prisma.application.count({ where: { status: 'ACCEPTED' } }),
+      prisma.application.count({ where: { status: 'REJECTED' } }),
+    ]);
+
+    // Get total jobs count
+    const totalJobs = await prisma.job.count();
+
+    // Get recent activity (last 10 admin actions)
+    const recentActivity = await prisma.adminAction.findMany({
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        admin: {
+          include: {
+            user: {
+              select: {
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.json({
+      companies: {
+        total: totalCompanies,
+        active: activeCompanies,
+        inactive: inactiveCompanies,
+        suspended: suspendedCompanies,
+      },
+      applications: {
+        total: totalApplications,
+        pending: pendingApplications,
+        accepted: acceptedApplications,
+        rejected: rejectedApplications,
+      },
+      jobs: {
+        total: totalJobs,
+      },
+      recentActivity,
+    });
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    res.status(500).json({ error: 'Failed to fetch dashboard statistics' });
+  }
+});
+
+// ========================================
 // ADMIN: Get all companies with search and filter
 // ========================================
 router.get('/', authenticate, requireRole(['ADMIN']), async (req: AuthRequest, res) => {

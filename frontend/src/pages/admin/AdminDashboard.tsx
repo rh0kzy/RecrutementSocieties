@@ -13,6 +13,39 @@ interface Company {
   updatedAt: string;
 }
 
+interface Application {
+  id: number;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  createdAt: string;
+  candidate: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    user: {
+      email: string;
+    };
+  };
+  job: {
+    title: string;
+    deadline: string | null;
+  };
+  company: {
+    companyName: string;
+  };
+}
+
+interface AdminAction {
+  id: number;
+  action: string;
+  details: string | null;
+  createdAt: string;
+  admin: {
+    user: {
+      email: string;
+    };
+  };
+}
+
 interface PaginationData {
   total: number;
   page: number;
@@ -67,6 +100,31 @@ const AdminDashboard: React.FC = () => {
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Applications state
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [applicationsSearch, setApplicationsSearch] = useState('');
+  const [applicationStatusFilter, setApplicationStatusFilter] = useState<string>('all');
+  const [applicationsPage, setApplicationsPage] = useState(1);
+  const [applicationsPagination, setApplicationsPagination] = useState<PaginationData>({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0,
+  });
+
+  // Logs state
+  const [logs, setLogs] = useState<AdminAction[]>([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [logsSearch, setLogsSearch] = useState('');
+  const [logsPage, setLogsPage] = useState(1);
+  const [logsPagination, setLogsPagination] = useState<PaginationData>({
+    total: 0,
+    page: 1,
+    limit: 20,
+    totalPages: 0,
+  });
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -97,16 +155,15 @@ const AdminDashboard: React.FC = () => {
   // Fetch stats
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/companies', {
-        params: { limit: 1000 }, // Get all for stats
-      });
-      const allCompanies = response.data.companies;
+      const response = await axios.get('/api/companies/stats/dashboard');
       setStats({
-        totalCompanies: response.data.pagination.total,
-        activeCompanies: allCompanies.filter((c: Company) => c.status === 'ACTIVE').length,
-        totalApplications: 0, // TODO: Implement
-        pendingReviews: 0, // TODO: Implement
+        totalCompanies: response.data.companies.total,
+        activeCompanies: response.data.companies.active,
+        totalApplications: response.data.applications.total,
+        pendingReviews: response.data.applications.pending,
       });
+      // Store recent activity for display
+      setLogs(response.data.recentActivity);
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
@@ -291,12 +348,64 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Fetch applications
+  const fetchApplications = async () => {
+    setApplicationsLoading(true);
+    try {
+      const response = await axios.get('/api/applications/admin/all', {
+        params: {
+          search: applicationsSearch,
+          status: applicationStatusFilter,
+          page: applicationsPage,
+          limit: 10,
+        },
+      });
+      setApplications(response.data.applications);
+      setApplicationsPagination(response.data.pagination);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+    } finally {
+      setApplicationsLoading(false);
+    }
+  };
+
+  const fetchLogs = async () => {
+    setLogsLoading(true);
+    try {
+      const response = await axios.get('/api/admin-actions/all', {
+        params: {
+          search: logsSearch,
+          page: logsPage,
+          limit: 20,
+        },
+      });
+      setLogs(response.data.actions);
+      setLogsPagination(response.data.pagination);
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+    } finally {
+      setLogsLoading(false);
+    }
+  };
+
   // Effects
   useEffect(() => {
     if (activeTab === 'companies') {
       fetchCompanies();
     }
   }, [activeTab, searchTerm, statusFilter, pagination.page]);
+
+  useEffect(() => {
+    if (activeTab === 'applications') {
+      fetchApplications();
+    }
+  }, [activeTab, applicationsSearch, applicationStatusFilter, applicationsPage]);
+
+  useEffect(() => {
+    if (activeTab === 'logs') {
+      fetchLogs();
+    }
+  }, [activeTab, logsSearch, logsPage]);
 
   useEffect(() => {
     if (activeTab === 'overview') {
@@ -384,7 +493,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-[#5E6C84] text-sm font-medium">Total Applications</p>
-                    <p className="text-3xl font-bold text-[#172B4D] mt-2">0</p>
+                    <p className="text-3xl font-bold text-[#172B4D] mt-2">{stats.totalApplications}</p>
                   </div>
                   <div className="bg-[#EAE6FF] p-3 rounded-full">
                     <svg className="w-8 h-8 text-[#6554C0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -398,7 +507,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-[#5E6C84] text-sm font-medium">Pending Reviews</p>
-                    <p className="text-3xl font-bold text-[#172B4D] mt-2">0</p>
+                    <p className="text-3xl font-bold text-[#172B4D] mt-2">{stats.pendingReviews}</p>
                   </div>
                   <div className="bg-[#FFF0B3] p-3 rounded-full">
                     <svg className="w-8 h-8 text-[#FFAB00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -411,13 +520,57 @@ const AdminDashboard: React.FC = () => {
 
             {/* Recent Activity */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-xl font-semibold text-[#172B4D] mb-4">Recent Activity</h3>
-              <div className="text-center py-12 text-[#5E6C84]">
-                <svg className="w-16 h-16 mx-auto mb-4 text-[#C1C7D0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                <p>No recent activity</p>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold text-[#172B4D]">Recent Activity</h3>
+                {logs.length > 0 && (
+                  <button
+                    onClick={() => setActiveTab('logs')}
+                    className="text-[#0052CC] hover:text-[#0747A6] text-sm font-medium transition-colors"
+                  >
+                    View All →
+                  </button>
+                )}
               </div>
+              {logs.length === 0 ? (
+                <div className="text-center py-12 text-[#5E6C84]">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-[#C1C7D0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <p>No recent activity</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {logs.map((log) => (
+                    <div key={log.id} className="flex items-start gap-4 p-4 border border-[#DFE1E6] rounded-lg hover:bg-[#F4F5F7] transition-colors">
+                      <div className="flex-shrink-0 mt-1">
+                        <div className="w-10 h-10 bg-[#DEEBFF] rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-[#0052CC]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[#172B4D]">{log.action}</p>
+                        {log.details && (
+                          <p className="text-sm text-[#5E6C84] mt-1">{log.details}</p>
+                        )}
+                        <div className="flex items-center gap-2 mt-2 text-xs text-[#5E6C84]">
+                          <span>{log.admin.user.email}</span>
+                          <span>•</span>
+                          <span>
+                            {new Date(log.createdAt).toLocaleString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -665,15 +818,175 @@ const AdminDashboard: React.FC = () => {
       case 'applications':
         return (
           <div>
-            <h2 className="text-2xl font-bold text-[#172B4D] mb-6">All Applications</h2>
-            
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="text-center py-12 text-[#5E6C84]">
-                <svg className="w-16 h-16 mx-auto mb-4 text-[#C1C7D0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <p>No applications yet</p>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#172B4D]">All Applications</h2>
+            </div>
+
+            {/* Filters */}
+            <div className="bg-white rounded-lg shadow-md p-4 mb-6 flex gap-4 items-center flex-wrap">
+              {/* Search */}
+              <div className="flex-1 min-w-[250px]">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search by candidate, job, or company..."
+                    value={applicationsSearch}
+                    onChange={(e) => setApplicationsSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-[#DFE1E6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                  />
+                  <svg
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#5E6C84]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
               </div>
+
+              {/* Status Filter */}
+              <div>
+                <select
+                  value={applicationStatusFilter}
+                  onChange={(e) => setApplicationStatusFilter(e.target.value)}
+                  className="px-4 py-2 border border-[#DFE1E6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0052CC] bg-white"
+                >
+                  <option value="all">All Status</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="ACCEPTED">Accepted</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Applications Table */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              {applicationsLoading ? (
+                <div className="text-center py-12 text-[#5E6C84]">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0052CC]"></div>
+                  <p className="mt-4">Loading applications...</p>
+                </div>
+              ) : applications.length === 0 ? (
+                <div className="text-center py-12 text-[#5E6C84]">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-[#C1C7D0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <p>No applications found</p>
+                  <p className="text-sm mt-2">Applications will appear here once candidates start applying</p>
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-[#F4F5F7] border-b border-[#DFE1E6]">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Candidate
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Job Title
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Company
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Applied Date
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-[#DFE1E6]">
+                        {applications.map((application) => (
+                          <tr key={application.id} className="hover:bg-[#F4F5F7] transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div>
+                                <div className="text-sm font-medium text-[#172B4D]">
+                                  {application.candidate.firstName} {application.candidate.lastName}
+                                </div>
+                                <div className="text-sm text-[#5E6C84]">{application.candidate.user.email}</div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-[#172B4D]">{application.job.title}</div>
+                              {application.job.deadline && (
+                                <div className="text-xs text-[#5E6C84]">
+                                  Deadline: {new Date(application.job.deadline).toLocaleDateString()}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-[#172B4D]">{application.company.companyName}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                  application.status === 'ACCEPTED'
+                                    ? 'bg-[#E3FCEF] text-[#36B37E]'
+                                    : application.status === 'REJECTED'
+                                    ? 'bg-[#FFEBE6] text-[#DE350B]'
+                                    : 'bg-[#FFF0B3] text-[#FF991F]'
+                                }`}
+                              >
+                                {application.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#5E6C84]">
+                              {new Date(application.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                              })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination */}
+                  {applicationsPagination.totalPages > 1 && (
+                    <div className="bg-[#F4F5F7] px-6 py-4 flex items-center justify-between border-t border-[#DFE1E6]">
+                      <div className="text-sm text-[#5E6C84]">
+                        Showing {(applicationsPagination.page - 1) * applicationsPagination.limit + 1} to{' '}
+                        {Math.min(applicationsPagination.page * applicationsPagination.limit, applicationsPagination.total)} of{' '}
+                        {applicationsPagination.total} applications
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setApplicationsPage(applicationsPage - 1)}
+                          disabled={applicationsPage === 1}
+                          className="px-3 py-1 border border-[#DFE1E6] rounded bg-white text-[#172B4D] hover:bg-[#F4F5F7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Previous
+                        </button>
+                        {Array.from({ length: applicationsPagination.totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => setApplicationsPage(page)}
+                            className={`px-3 py-1 border rounded transition-colors ${
+                              page === applicationsPage
+                                ? 'bg-[#0052CC] text-white border-[#0052CC]'
+                                : 'bg-white text-[#172B4D] border-[#DFE1E6] hover:bg-[#F4F5F7]'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setApplicationsPage(applicationsPage + 1)}
+                          disabled={applicationsPage === applicationsPagination.totalPages}
+                          className="px-3 py-1 border border-[#DFE1E6] rounded bg-white text-[#172B4D] hover:bg-[#F4F5F7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         );
@@ -681,15 +994,136 @@ const AdminDashboard: React.FC = () => {
       case 'logs':
         return (
           <div>
-            <h2 className="text-2xl font-bold text-[#172B4D] mb-6">Activity Logs</h2>
-            
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="text-center py-12 text-[#5E6C84]">
-                <svg className="w-16 h-16 mx-auto mb-4 text-[#C1C7D0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-[#172B4D]">Activity Logs</h2>
+            </div>
+
+            {/* Search */}
+            <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by action or details..."
+                  value={logsSearch}
+                  onChange={(e) => setLogsSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-[#DFE1E6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0052CC] focus:border-transparent"
+                />
+                <svg
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#5E6C84]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <p>No activity logs</p>
               </div>
+            </div>
+
+            {/* Logs Table */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              {logsLoading ? (
+                <div className="text-center py-12 text-[#5E6C84]">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0052CC]"></div>
+                  <p className="mt-4">Loading activity logs...</p>
+                </div>
+              ) : logs.length === 0 ? (
+                <div className="text-center py-12 text-[#5E6C84]">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-[#C1C7D0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                  <p>No activity logs found</p>
+                  <p className="text-sm mt-2">Admin actions will appear here</p>
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-[#F4F5F7] border-b border-[#DFE1E6]">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Timestamp
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Admin
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Action
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#5E6C84] uppercase tracking-wider">
+                            Details
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-[#DFE1E6]">
+                        {logs.map((log) => (
+                          <tr key={log.id} className="hover:bg-[#F4F5F7] transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#5E6C84]">
+                              {new Date(log.createdAt).toLocaleString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-[#172B4D]">{log.admin.user.email}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-[#172B4D]">{log.action}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-[#5E6C84]">
+                                {log.details || '-'}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination */}
+                  {logsPagination.totalPages > 1 && (
+                    <div className="bg-[#F4F5F7] px-6 py-4 flex items-center justify-between border-t border-[#DFE1E6]">
+                      <div className="text-sm text-[#5E6C84]">
+                        Showing {(logsPagination.page - 1) * logsPagination.limit + 1} to{' '}
+                        {Math.min(logsPagination.page * logsPagination.limit, logsPagination.total)} of{' '}
+                        {logsPagination.total} logs
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setLogsPage(logsPage - 1)}
+                          disabled={logsPage === 1}
+                          className="px-3 py-1 border border-[#DFE1E6] rounded bg-white text-[#172B4D] hover:bg-[#F4F5F7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Previous
+                        </button>
+                        {Array.from({ length: logsPagination.totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => setLogsPage(page)}
+                            className={`px-3 py-1 border rounded transition-colors ${
+                              page === logsPage
+                                ? 'bg-[#0052CC] text-white border-[#0052CC]'
+                                : 'bg-white text-[#172B4D] border-[#DFE1E6] hover:bg-[#F4F5F7]'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setLogsPage(logsPage + 1)}
+                          disabled={logsPage === logsPagination.totalPages}
+                          className="px-3 py-1 border border-[#DFE1E6] rounded bg-white text-[#172B4D] hover:bg-[#F4F5F7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         );
