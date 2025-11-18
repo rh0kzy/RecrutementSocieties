@@ -69,25 +69,25 @@ const CompanySignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 font-sans">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Create Company Account</h2>
+    <div className="min-h-screen flex items-center justify-center bg-background font-primary">
+      <div className="max-w-md w-full bg-surface p-8 rounded-xl shadow-medium">
+        <h2 className="text-3xl font-bold text-center text-text-primary mb-6">Create Company Account</h2>
         
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <div className="bg-red-50 border border-red-200 text-error px-4 py-3 rounded-xl relative mb-4" role="alert">
             <span className="block sm:inline">{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <div className="bg-success/10 border border-success text-success px-4 py-3 rounded-xl relative mb-4" role="alert">
             <span className="block sm:inline">{success}</span>
           </div>
         )}
 
         <form onSubmit={handleSignup}>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+            <label className="block text-text-secondary text-sm font-bold mb-2" htmlFor="name">
               Company Name
             </label>
             <input
@@ -95,14 +95,14 @@ const CompanySignupPage: React.FC = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="shadow appearance-none border border-border rounded-xl w-full py-2 px-3 text-text-primary leading-tight focus:outline-none focus:ring-2 focus:ring-primary/10"
               required
               placeholder="Your Company LLC"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label className="block text-text-secondary text-sm font-bold mb-2" htmlFor="email">
               Email Address
             </label>
             <input
@@ -110,14 +110,14 @@ const CompanySignupPage: React.FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="shadow appearance-none border border-border rounded-xl w-full py-2 px-3 text-text-primary leading-tight focus:outline-none focus:ring-2 focus:ring-primary/10"
               required
               placeholder="contact@yourcompany.com"
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label className="block text-text-secondary text-sm font-bold mb-2" htmlFor="password">
               Password
             </label>
             <input
@@ -125,14 +125,14 @@ const CompanySignupPage: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="shadow appearance-none border border-border rounded-xl w-full py-2 px-3 text-text-primary leading-tight focus:outline-none focus:ring-2 focus:ring-primary/10"
               required
               placeholder="Minimum 8 characters"
             />
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirm-password">
+            <label className="block text-text-secondary text-sm font-bold mb-2" htmlFor="confirm-password">
               Confirm Password
             </label>
             <input
@@ -140,7 +140,7 @@ const CompanySignupPage: React.FC = () => {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="shadow appearance-none border border-border rounded-xl w-full py-2 px-3 text-text-primary mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-primary/10"
               required
               placeholder="Re-enter your password"
             />
@@ -149,16 +149,16 @@ const CompanySignupPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full disabled:bg-blue-300"
+              className="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline w-full disabled:bg-gray-300"
               disabled={loading}
             >
               {loading ? 'Registering...' : 'Sign Up'}
             </button>
           </div>
 
-          <div className="mt-6 text-center text-sm text-gray-600">
+          <div className="mt-6 text-center text-sm text-text-muted">
             Already have an account?{' '}
-            <Link to="/login" className="font-bold text-blue-500 hover:text-blue-800">
+            <Link to="/login" className="font-bold text-primary hover:text-secondary">
               Login
             </Link>
           </div>

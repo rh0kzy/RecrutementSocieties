@@ -282,60 +282,60 @@ const CompanyDashboard: React.FC = () => {
   const renderOverview = () => {
     return (
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Dashboard Overview</h2>
+        <h2 className="text-2xl font-bold text-text-primary mb-6">Dashboard Overview</h2>
         
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+          <div className="bg-surface rounded-xl shadow-medium p-6 border-l-4 border-primary">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Active Jobs</p>
-                <p className="text-3xl font-bold text-gray-800 mt-2">{stats.activeJobs}</p>
+                <p className="text-text-secondary text-sm font-medium">Active Jobs</p>
+                <p className="text-3xl font-bold text-text-primary mt-2">{stats.activeJobs}</p>
               </div>
-              <div className="bg-blue-100 rounded-full p-3">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-primary/10 rounded-xl p-3">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+          <div className="bg-surface rounded-xl shadow-medium p-6 border-l-4 border-success">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Applications</p>
-                <p className="text-3xl font-bold text-gray-800 mt-2">{stats.totalApplications}</p>
+                <p className="text-text-secondary text-sm font-medium">Total Applications</p>
+                <p className="text-3xl font-bold text-text-primary mt-2">{stats.totalApplications}</p>
               </div>
-              <div className="bg-green-100 rounded-full p-3">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-success/10 rounded-xl p-3">
+                <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
+          <div className="bg-surface rounded-xl shadow-medium p-6 border-l-4 border-warning">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Pending Review</p>
-                <p className="text-3xl font-bold text-gray-800 mt-2">{stats.pendingReview}</p>
+                <p className="text-text-secondary text-sm font-medium">Pending Review</p>
+                <p className="text-3xl font-bold text-text-primary mt-2">{stats.pendingReview}</p>
               </div>
-              <div className="bg-yellow-100 rounded-full p-3">
-                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-warning/10 rounded-xl p-3">
+                <svg className="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+          <div className="bg-surface rounded-xl shadow-medium p-6 border-l-4 border-info">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Hired</p>
-                <p className="text-3xl font-bold text-gray-800 mt-2">{stats.hired}</p>
+                <p className="text-text-secondary text-sm font-medium">Hired</p>
+                <p className="text-3xl font-bold text-text-primary mt-2">{stats.hired}</p>
               </div>
-              <div className="bg-purple-100 rounded-full p-3">
-                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-info/10 rounded-xl p-3">
+                <svg className="w-8 h-8 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -344,8 +344,8 @@ const CompanyDashboard: React.FC = () => {
         </div>
 
         {/* Welcome Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+        <div className="bg-surface rounded-xl shadow-medium p-6 mb-6">
+          <h3 className="text-xl font-semibold text-text-primary mb-4">
             Welcome back, {companyProfile?.companyName || 'Company'}!
           </h3>
           <p className="text-gray-600 mb-4">
@@ -798,19 +798,19 @@ const CompanyDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background font-primary">
       {/* Top Navigation Bar */}
-      <nav className="bg-white shadow-sm border-b border-gray-200">
+      <nav className="bg-surface shadow-low border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-blue-600">RecruitmentSaaS</h1>
+              <h1 className="text-xl font-bold text-primary">RecruitmentSaaS</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">{companyProfile?.companyName}</span>
+              <span className="text-sm text-text-secondary">{companyProfile?.companyName}</span>
               <button
                 onClick={handleLogout}
-                className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                className="bg-error hover:bg-red-700 text-white font-medium py-2 px-4 rounded-xl transition-colors"
               >
                 Logout
               </button>
@@ -821,25 +821,25 @@ const CompanyDashboard: React.FC = () => {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-lg min-h-screen">
+        <aside className="w-64 bg-surface shadow-medium min-h-screen">
           <div className="p-6">
             <div className="mb-8">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-primary/10 rounded-xl w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <p className="text-center text-sm font-medium text-gray-800">{companyProfile?.companyName}</p>
-              <p className="text-center text-xs text-gray-500">{companyProfile?.email}</p>
+              <p className="text-center text-sm font-medium text-text-primary">{companyProfile?.companyName}</p>
+              <p className="text-center text-xs text-text-muted">{companyProfile?.email}</p>
             </div>
 
             <nav className="space-y-2">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
                   activeTab === 'overview'
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-text-secondary hover:bg-surface-hover'
                 }`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -850,10 +850,10 @@ const CompanyDashboard: React.FC = () => {
 
               <button
                 onClick={() => setActiveTab('jobs')}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
                   activeTab === 'jobs'
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-text-secondary hover:bg-surface-hover'
                 }`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -864,10 +864,10 @@ const CompanyDashboard: React.FC = () => {
 
               <button
                 onClick={() => setActiveTab('applications')}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
                   activeTab === 'applications'
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-text-secondary hover:bg-surface-hover'
                 }`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -878,10 +878,10 @@ const CompanyDashboard: React.FC = () => {
 
               <button
                 onClick={() => setActiveTab('settings')}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
                   activeTab === 'settings'
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'text-text-secondary hover:bg-surface-hover'
                 }`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

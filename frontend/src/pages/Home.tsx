@@ -2,9 +2,9 @@ import React from 'react'
 
 export default function Home() {
   return (
-    <div className="bg-white p-6 rounded-md shadow">
-      <h2 className="text-xl font-semibold">Welcome</h2>
-      <p className="mt-2">This is the Recruitment SaaS MVP frontend scaffold.</p>
+    <div className="bg-background p-6 rounded-xl shadow-low border border-border">
+      <h2 className="text-2xl font-bold text-text-primary mb-4">Welcome</h2>
+      <p className="text-text-secondary">This is the Recruitment SaaS MVP frontend scaffold.</p>
     </div>
   )
 }
