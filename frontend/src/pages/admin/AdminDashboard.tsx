@@ -43,6 +43,18 @@ const AdminDashboard: React.FC = () => {
     pendingReviews: 0,
   });
 
+  // Create company modal state
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createFormData, setCreateFormData] = useState({
+    email: '',
+    password: '',
+    companyName: '',
+    status: 'ACTIVE' as 'ACTIVE' | 'INACTIVE' | 'SUSPENDED',
+    paymentStatus: 'PENDING' as 'PAID' | 'PENDING' | 'FAILED',
+  });
+  const [createError, setCreateError] = useState('');
+  const [createLoading, setCreateLoading] = useState(false);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -114,6 +126,61 @@ const AdminDashboard: React.FC = () => {
       console.error('Error deleting company:', error);
       alert('Failed to delete company');
     }
+  };
+
+  // Create new company
+  const handleCreateCompany = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateError('');
+    setCreateLoading(true);
+
+    // Validation
+    if (!createFormData.email || !createFormData.password || !createFormData.companyName) {
+      setCreateError('All fields are required');
+      setCreateLoading(false);
+      return;
+    }
+
+    if (createFormData.password.length < 6) {
+      setCreateError('Password must be at least 6 characters long');
+      setCreateLoading(false);
+      return;
+    }
+
+    try {
+      await axios.post('/api/companies', createFormData);
+      
+      // Reset form and close modal
+      setCreateFormData({
+        email: '',
+        password: '',
+        companyName: '',
+        status: 'ACTIVE',
+        paymentStatus: 'PENDING',
+      });
+      setIsCreateModalOpen(false);
+      
+      // Refresh data
+      fetchCompanies();
+      fetchStats();
+    } catch (error: any) {
+      console.error('Error creating company:', error);
+      setCreateError(error.response?.data?.error || 'Failed to create company');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+    setCreateError('');
+    setCreateFormData({
+      email: '',
+      password: '',
+      companyName: '',
+      status: 'ACTIVE',
+      paymentStatus: 'PENDING',
+    });
   };
 
   // Effects
@@ -252,8 +319,14 @@ const AdminDashboard: React.FC = () => {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-[#172B4D]">Companies Management</h2>
-              <button className="bg-[#0052CC] hover:bg-[#0747A6] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
-                + Add Company
+              <button 
+                onClick={() => setIsCreateModalOpen(true)}
+                className="bg-[#0052CC] hover:bg-[#0747A6] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Add Company
               </button>
             </div>
 
@@ -628,6 +701,156 @@ const AdminDashboard: React.FC = () => {
           {renderContent()}
         </div>
       </main>
+
+      {/* Create Company Modal */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-[#0052CC] to-[#0747A6] px-6 py-4 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-white">Create New Company</h3>
+                <button
+                  onClick={handleCloseCreateModal}
+                  className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleCreateCompany} className="p-6 space-y-4">
+              {/* Error Message */}
+              {createError && (
+                <div className="bg-red-50 border-l-4 border-[#DE350B] p-4 rounded-r-lg">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-[#DE350B] mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-[#DE350B] text-sm font-medium">{createError}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Company Name */}
+              <div>
+                <label htmlFor="companyName" className="block text-sm font-semibold text-[#172B4D] mb-2">
+                  Company Name *
+                </label>
+                <input
+                  id="companyName"
+                  type="text"
+                  value={createFormData.companyName}
+                  onChange={(e) => setCreateFormData({ ...createFormData, companyName: e.target.value })}
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#0052CC] focus:ring-4 focus:ring-blue-50 transition-all outline-none"
+                  placeholder="Acme Corporation"
+                  required
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-[#172B4D] mb-2">
+                  Email Address *
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={createFormData.email}
+                  onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#0052CC] focus:ring-4 focus:ring-blue-50 transition-all outline-none"
+                  placeholder="company@example.com"
+                  required
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-semibold text-[#172B4D] mb-2">
+                  Password *
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={createFormData.password}
+                  onChange={(e) => setCreateFormData({ ...createFormData, password: e.target.value })}
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#0052CC] focus:ring-4 focus:ring-blue-50 transition-all outline-none"
+                  placeholder="Minimum 6 characters"
+                  required
+                  minLength={6}
+                />
+                <p className="text-xs text-[#5E6C84] mt-1">Must be at least 6 characters long</p>
+              </div>
+
+              {/* Status */}
+              <div>
+                <label htmlFor="status" className="block text-sm font-semibold text-[#172B4D] mb-2">
+                  Account Status
+                </label>
+                <select
+                  id="status"
+                  value={createFormData.status}
+                  onChange={(e) => setCreateFormData({ ...createFormData, status: e.target.value as any })}
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#0052CC] focus:ring-4 focus:ring-blue-50 transition-all outline-none"
+                >
+                  <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
+                  <option value="SUSPENDED">Suspended</option>
+                </select>
+              </div>
+
+              {/* Payment Status */}
+              <div>
+                <label htmlFor="paymentStatus" className="block text-sm font-semibold text-[#172B4D] mb-2">
+                  Payment Status
+                </label>
+                <select
+                  id="paymentStatus"
+                  value={createFormData.paymentStatus}
+                  onChange={(e) => setCreateFormData({ ...createFormData, paymentStatus: e.target.value as any })}
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-[#0052CC] focus:ring-4 focus:ring-blue-50 transition-all outline-none"
+                >
+                  <option value="PAID">Paid</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="FAILED">Failed</option>
+                </select>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={handleCloseCreateModal}
+                  className="flex-1 px-4 py-2 border-2 border-gray-300 text-[#5E6C84] font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                  disabled={createLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-[#0052CC] hover:bg-[#0747A6] text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={createLoading}
+                >
+                  {createLoading ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating...
+                    </span>
+                  ) : (
+                    'Create Company'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
