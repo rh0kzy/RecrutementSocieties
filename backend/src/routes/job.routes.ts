@@ -261,4 +261,32 @@ router.delete(
   }
 );
 
+// Get public job details by ID (for candidates to apply)
+router.get(
+  '/public/:id',
+  async (req: Request, res: Response) => {
+    try {
+      const jobId = parseInt(req.params.id);
+
+      const job = await prisma.job.findUnique({
+        where: { id: jobId },
+        include: {
+          company: {
+            select: { companyName: true }
+          }
+        }
+      });
+
+      if (!job) {
+        return res.status(404).json({ message: 'Job not found' });
+      }
+
+      res.json(job);
+    } catch (error) {
+      console.error('Error fetching job:', error);
+      res.status(500).json({ message: 'Error fetching job' });
+    }
+  }
+);
+
 export default router;

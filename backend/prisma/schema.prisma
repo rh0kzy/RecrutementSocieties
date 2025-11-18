@@ -97,6 +97,7 @@ model Application {
   company     Company           @relation(fields: [companyId], references: [id])
   companyId   Int
   status      ApplicationStatus @default(PENDING)
+  answers     Json?
   createdAt   DateTime          @default(now())
 }
 

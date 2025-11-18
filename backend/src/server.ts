@@ -10,6 +10,7 @@ import applicationRouter from './routes/application.routes';
 import companyRouter from './routes/company.routes';
 import adminActionRouter from './routes/adminAction.routes';
 import candidateRouter from './routes/candidate.routes';
+import uploadRouter from './routes/upload.routes';
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -52,6 +53,7 @@ app.use('/api/applications', applicationRouter);
 app.use('/api/companies', companyRouter);
 app.use('/api/admin-actions', adminActionRouter);
 app.use('/api/candidate', candidateRouter);
+app.use('/api/upload', uploadRouter);
 
 app.get('/health', async (req, res) => {
   res.json({ status: 'ok' });
