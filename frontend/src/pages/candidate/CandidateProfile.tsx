@@ -29,6 +29,12 @@ interface CandidateProfile {
   dateOfBirth: string;
   education: Education[];
   experience: Experience[];
+  cv?: File | null;
+  idCard?: File | null;
+  militaryStatus?: File | null;
+  cvUrl?: string;
+  idCardUrl?: string;
+  militaryStatusUrl?: string;
 }
 
 const CandidateProfile: React.FC = () => {
@@ -41,7 +47,13 @@ const CandidateProfile: React.FC = () => {
     address: '',
     dateOfBirth: '',
     education: [],
-    experience: []
+    experience: [],
+    cv: null,
+    idCard: null,
+    militaryStatus: null,
+    cvUrl: '',
+    idCardUrl: '',
+    militaryStatusUrl: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -63,7 +75,13 @@ const CandidateProfile: React.FC = () => {
         address: data.profile?.address || '',
         dateOfBirth: data.profile?.dateOfBirth || '',
         education: data.profile?.education || [],
-        experience: data.profile?.experience || []
+        experience: data.profile?.experience || [],
+        cv: null,
+        idCard: null,
+        militaryStatus: null,
+        cvUrl: data.profile?.cvUrl || '',
+        idCardUrl: data.profile?.idCardUrl || '',
+        militaryStatusUrl: data.profile?.militaryStatusUrl || ''
       });
     } catch (err) {
       console.error('Error fetching profile:', err);
@@ -77,6 +95,21 @@ const CandidateProfile: React.FC = () => {
     setSaving(true);
     setError('');
     try {
+      // Upload files if they exist
+      let cvUrl = profile.cvUrl;
+      let idCardUrl = profile.idCardUrl;
+      let militaryStatusUrl = profile.militaryStatusUrl;
+
+      if (profile.cv) {
+        cvUrl = await uploadFile(profile.cv, 'cv');
+      }
+      if (profile.idCard) {
+        idCardUrl = await uploadFile(profile.idCard, 'id-card');
+      }
+      if (profile.militaryStatus) {
+        militaryStatusUrl = await uploadFile(profile.militaryStatus, 'military-status');
+      }
+
       await api.put('/api/candidate/profile', {
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -85,9 +118,24 @@ const CandidateProfile: React.FC = () => {
           address: profile.address,
           dateOfBirth: profile.dateOfBirth,
           education: profile.education,
-          experience: profile.experience
+          experience: profile.experience,
+          cvUrl,
+          idCardUrl,
+          militaryStatusUrl
         }
       });
+
+      // Update local state with new URLs
+      setProfile(prev => ({
+        ...prev,
+        cvUrl,
+        idCardUrl,
+        militaryStatusUrl,
+        cv: null,
+        idCard: null,
+        militaryStatus: null
+      }));
+
       alert('Profile saved successfully!');
     } catch (err) {
       console.error('Error saving profile:', err);
@@ -157,6 +205,55 @@ const CandidateProfile: React.FC = () => {
       ...prev,
       experience: prev.experience.filter(exp => exp.id !== id)
     }));
+  };
+
+  const validateFile = (file: File, allowedTypes: string[], maxSize: number): string | null => {
+    if (!allowedTypes.includes(file.type)) {
+      return `File type not allowed. Allowed types: ${allowedTypes.join(', ')}`;
+    }
+    if (file.size > maxSize) {
+      return `File size too large. Maximum size: ${maxSize / (1024 * 1024)}MB`;
+    }
+    return null;
+  };
+
+  const handleFileChange = (field: 'cv' | 'idCard' | 'militaryStatus') => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    const error = validateFile(file, allowedTypes, maxSize);
+    if (error) {
+      setError(error);
+      return;
+    }
+
+    setError('');
+    setProfile(prev => ({
+      ...prev,
+      [field]: file
+    }));
+  };
+
+  const uploadFile = async (file: File, fileName: string): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const filePath = `candidates/${Date.now()}-${fileName}.${fileExt}`;
+
+    const { data, error } = await supabase.storage
+      .from('documents')
+      .upload(filePath, file);
+
+    if (error) {
+      throw new Error(`Upload failed: ${error.message}`);
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('documents')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
   };
 
   const handleLogout = () => {
@@ -448,6 +545,65 @@ const CandidateProfile: React.FC = () => {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="bg-surface shadow-medium rounded-xl p-6 mb-6">
+          <h2 className="text-xl font-semibold text-text-primary mb-4">Required Documents</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                CV/Resume *
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange('cv')}
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+              />
+              {profile.cvUrl && (
+                <p className="text-sm text-text-muted mt-1">
+                  Current file: <a href={profile.cvUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary">View CV</a>
+                </p>
+              )}
+              <p className="text-xs text-text-muted mt-1">Accepted formats: PDF, DOC, DOCX. Max size: 5MB</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                ID Card *
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileChange('idCard')}
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+              />
+              {profile.idCardUrl && (
+                <p className="text-sm text-text-muted mt-1">
+                  Current file: <a href={profile.idCardUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary">View ID Card</a>
+                </p>
+              )}
+              <p className="text-xs text-text-muted mt-1">Accepted formats: PDF, JPG, PNG. Max size: 5MB</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Military Situation Certificate *
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileChange('militaryStatus')}
+                className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/10 text-text-primary file:mr-4 file:py-2 file:px-4 file:rounded-l-xl file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+              />
+              {profile.militaryStatusUrl && (
+                <p className="text-sm text-text-muted mt-1">
+                  Current file: <a href={profile.militaryStatusUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary">View Military Certificate</a>
+                </p>
+              )}
+              <p className="text-xs text-text-muted mt-1">Accepted formats: PDF, JPG, PNG. Max size: 5MB</p>
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end">
