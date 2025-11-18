@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import supabase from '../lib/supabase';
+import { uploadFileToBackblaze, validateFile } from '../lib/upload';
 
 interface Job {
   id: number;
@@ -9,6 +9,7 @@ interface Job {
   description: string;
   deadline: string | null;
   extraQuestions: CustomQuestion[] | null;
+  companyId: number;
   company: {
     companyName: string;
   };
@@ -167,12 +168,9 @@ const JobApplication: React.FC = () => {
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
     const maxSize = 5 * 1024 * 1024; // 5MB
 
-    if (!allowedTypes.includes(file.type)) {
-      setError(`Invalid file type for ${field}. Allowed: PDF, DOC, DOCX, JPG, PNG`);
-      return;
-    }
-    if (file.size > maxSize) {
-      setError(`File too large for ${field}. Maximum size: 5MB`);
+    const error = validateFile(file, allowedTypes, maxSize);
+    if (error) {
+      setError(error);
       return;
     }
 

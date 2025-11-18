@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
-import supabase from '../../lib/supabase';
+import { uploadFileToBackblaze } from '../../lib/upload';
 
 interface Education {
   id: string;
@@ -105,10 +105,10 @@ const CandidateProfile: React.FC = () => {
         cvUrl = await uploadFile(profile.cv, 'cv');
       }
       if (profile.idCard) {
-        idCardUrl = await uploadFile(profile.idCard, 'id-card');
+        idCardUrl = await uploadFile(profile.idCard, 'idCard');
       }
       if (profile.militaryStatus) {
-        militaryStatusUrl = await uploadFile(profile.militaryStatus, 'military-status');
+        militaryStatusUrl = await uploadFile(profile.militaryStatus, 'militaryStatus');
       }
 
       await api.put('/api/candidate/profile', {
@@ -238,23 +238,8 @@ const CandidateProfile: React.FC = () => {
     }));
   };
 
-  const uploadFile = async (file: File, fileName: string): Promise<string> => {
-    const fileExt = file.name.split('.').pop();
-    const filePath = `candidates/${Date.now()}-${fileName}.${fileExt}`;
-
-    const { data, error } = await supabase.storage
-      .from('documents')
-      .upload(filePath, file);
-
-    if (error) {
-      throw new Error(`Upload failed: ${error.message}`);
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('documents')
-      .getPublicUrl(filePath);
-
-    return publicUrl;
+  const uploadFile = async (file: File, fileType: 'cv' | 'idCard' | 'militaryStatus'): Promise<string> => {
+    return await uploadFileToBackblaze(file, fileType);
   };
 
   const handleLogout = () => {
