@@ -307,7 +307,7 @@ Phase 4 — Candidate Application Flow
 - [x] 4.1 - Create Candidate profile form (personal info, education, experience)
 - [x] 4.2 - Add file upload fields (CV, ID card, military situation)
 - [x] 4.3 - Implement file validation (type: pdf/doc/docx/jpg/png, size: max 5MB)
-- [ ] 4.4 - Setup Supabase Storage for file uploads
+- [x] 4.4 - Setup Supabase Storage for file uploads
 - [ ] 4.5 - Display dynamic extra questions from job posting
 - [ ] 4.6 - Submit application with IP logging
 - [ ] 4.7 - Backend: Application submission endpoint
