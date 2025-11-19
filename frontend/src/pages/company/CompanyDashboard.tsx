@@ -39,8 +39,10 @@ interface CustomQuestion {
 interface Application {
   id: number;
   candidate: {
+    id: number;
     firstName: string;
     lastName: string;
+    profile: any;
     user: {
       email: string;
     };
@@ -93,6 +95,13 @@ const CompanyDashboard: React.FC = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [applicationsLoading, setApplicationsLoading] = useState(false);
   const [applicationsError, setApplicationsError] = useState('');
+
+  // Filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('all');
+  const [educationFilter, setEducationFilter] = useState('');
+  const [militaryFilter, setMilitaryFilter] = useState<'all' | 'has' | 'missing'>('all');
+  const [filteredApplications, setFilteredApplications] = useState<Application[]>([]);
 
   useEffect(() => {
     fetchCompanyProfile();
@@ -198,6 +207,46 @@ const CompanyDashboard: React.FC = () => {
       setApplicationsLoading(false);
     }
   };
+
+  // Filter applications based on search and filters
+  useEffect(() => {
+    let filtered = applications;
+
+    // Search filter (name, email, job title)
+    if (searchTerm) {
+      filtered = filtered.filter(app =>
+        `${app.candidate.firstName} ${app.candidate.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.candidate.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.job.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(app => app.status === statusFilter);
+    }
+
+    // Education filter
+    if (educationFilter) {
+      filtered = filtered.filter(app => {
+        const education = app.candidate.profile?.education || [];
+        return education.some((edu: any) =>
+          edu.degree?.toLowerCase().includes(educationFilter.toLowerCase()) ||
+          edu.institution?.toLowerCase().includes(educationFilter.toLowerCase())
+        );
+      });
+    }
+
+    // Military status filter
+    if (militaryFilter !== 'all') {
+      filtered = filtered.filter(app => {
+        const hasMilitary = app.candidate.profile?.militaryStatusUrl;
+        return militaryFilter === 'has' ? hasMilitary : !hasMilitary;
+      });
+    }
+
+    setFilteredApplications(filtered);
+  }, [applications, searchTerm, statusFilter, educationFilter, militaryFilter]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -681,6 +730,89 @@ const CompanyDashboard: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold text-text-primary mb-6">Applications</h2>
 
+        {/* Filters */}
+        <div className="bg-surface rounded-xl shadow-medium p-6 mb-6">
+          <h3 className="text-lg font-semibold text-text-primary mb-4">Filter Applications</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Search */}
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Search
+              </label>
+              <input
+                type="text"
+                placeholder="Name, email, or job title..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            {/* Status Filter */}
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Status
+              </label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="all">All Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="ACCEPTED">Accepted</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
+
+            {/* Education Filter */}
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Education
+              </label>
+              <input
+                type="text"
+                placeholder="Degree or institution..."
+                value={educationFilter}
+                onChange={(e) => setEducationFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            {/* Military Status Filter */}
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Military Certificate
+              </label>
+              <select
+                value={militaryFilter}
+                onChange={(e) => setMilitaryFilter(e.target.value as any)}
+                className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="all">All</option>
+                <option value="has">Has Certificate</option>
+                <option value="missing">Missing Certificate</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Clear Filters */}
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={() => {
+                setSearchTerm('');
+                setStatusFilter('all');
+                setEducationFilter('');
+                setMilitaryFilter('all');
+              }}
+              className="text-primary hover:text-secondary text-sm font-medium"
+            >
+              Clear all filters
+            </button>
+          </div>
+        </div>
+
+        {/* Applications Table */}
         <div className="bg-surface rounded-xl shadow-medium p-6">
           {applicationsLoading ? (
             <div className="text-center py-12">
@@ -701,13 +833,18 @@ const CompanyDashboard: React.FC = () => {
                 Try Again
               </button>
             </div>
-          ) : applications.length === 0 ? (
+          ) : filteredApplications.length === 0 ? (
             <div className="text-center py-12">
               <svg className="w-16 h-16 text-text-secondary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <p className="text-lg font-medium text-text-primary">No applications yet</p>
-              <p className="text-text-secondary text-sm mt-2">Applications will appear here once candidates start applying to your jobs</p>
+              <p className="text-lg font-medium text-text-primary">No applications found</p>
+              <p className="text-text-secondary text-sm mt-2">
+                {applications.length === 0
+                  ? 'Applications will appear here once candidates start applying to your jobs'
+                  : 'Try adjusting your filters to see more results'
+                }
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -729,7 +866,7 @@ const CompanyDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {applications.map((application) => (
+                  {filteredApplications.map((application) => (
                     <tr key={application.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -739,6 +876,19 @@ const CompanyDashboard: React.FC = () => {
                             </div>
                             <div className="text-sm text-gray-500">
                               {application.candidate.user.email}
+                            </div>
+                            {/* Show education and military status indicators */}
+                            <div className="flex items-center space-x-2 mt-1">
+                              {application.candidate.profile?.education?.length > 0 && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                  🎓 {application.candidate.profile.education[0].degree}
+                                </span>
+                              )}
+                              {application.candidate.profile?.militaryStatusUrl && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                  🎖️ Military Cert
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>

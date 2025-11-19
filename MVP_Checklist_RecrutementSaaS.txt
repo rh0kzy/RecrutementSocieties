@@ -317,7 +317,7 @@ Phase 4 — Candidate Application Flow
 
 Phase 5 — Company: View & Manage Applications
 - [x] 5.1 - Build Company: View applications table (all applications for their jobs)
-- [ ] 5.2 - Build Company: Filter/search candidates (skills, education, military status)
+- [x] 5.2 - Build Company: Filter/search candidates (skills, education, military status)
 - [ ] 5.3 - Build Company: View candidate profile modal (view-only)
 - [ ] 5.4 - Build Company: View uploaded documents (PDF viewer, no download)
 - [ ] 5.5 - Build Company: Accept/Reject buttons for applications

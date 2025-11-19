@@ -54,6 +54,15 @@ router.get('/company', authenticate, requireRole(['COMPANY']), async (req, res) 
               user: {
                 select: { email: true }
               }
+            },
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              profile: true,
+              user: {
+                select: { email: true }
+              }
             }
           },
           job: {
