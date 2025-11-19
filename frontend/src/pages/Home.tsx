@@ -18,6 +18,8 @@ export default function Home() {
 
   // Intersection Observer for scroll animations
   useEffect(() => {
+    if (isLoading) return;
+
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
@@ -36,7 +38,7 @@ export default function Home() {
     sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
-  }, []);
+  }, [isLoading]);
 
   // Simulate initial page loading
   useEffect(() => {
