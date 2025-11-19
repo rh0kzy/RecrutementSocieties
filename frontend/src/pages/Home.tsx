@@ -98,64 +98,10 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white font-primary">
-        {/* Loading Navigation Skeleton */}
-        <nav className="bg-white shadow-low border-b border-border">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <SkeletonLoader className="w-32 h-8" />
-              </div>
-              <div className="hidden md:flex items-center space-x-4">
-                <SkeletonLoader className="w-16 h-8" />
-                <SkeletonLoader className="w-20 h-8" />
-              </div>
-              <div className="md:hidden">
-                <SkeletonLoader className="w-8 h-8 rounded" />
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        {/* Loading Hero Section */}
-        <section className="bg-gradient-to-br from-background to-white py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center">
-              <SkeletonLoader className="w-3/4 h-12 mx-auto mb-6" />
-              <SkeletonLoader className="w-2/3 h-6 mx-auto mb-8" />
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <SkeletonLoader className="w-48 h-12 rounded-lg" />
-                <SkeletonLoader className="w-32 h-12 rounded-lg" />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Loading Features Section */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <SkeletonLoader className="w-64 h-8 mx-auto mb-4" />
-              <SkeletonLoader className="w-96 h-4 mx-auto" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="bg-white p-6 rounded-xl shadow-low">
-                  <SkeletonLoader className="w-12 h-12 rounded-lg mb-4" />
-                  <SkeletonLoader className="w-3/4 h-6 mb-2" />
-                  <SkeletonLoader lines={2} className="w-full" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Loading Spinner Overlay */}
-        <div className="fixed inset-0 bg-white/80 flex items-center justify-center z-50">
-          <div className="text-center">
-            <LoadingSpinner size="lg" className="mb-4" />
-            <p className="text-text-secondary">Loading RecruitHub...</p>
-          </div>
+      <div className="min-h-screen bg-white font-primary flex items-center justify-center">
+        <div className="text-center">
+          <LoadingSpinner size="lg" className="mb-4" />
+          <p className="text-text-secondary">Loading RecruitHub...</p>
         </div>
       </div>
     );
