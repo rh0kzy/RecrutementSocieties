@@ -36,6 +36,23 @@ interface CustomQuestion {
   required: boolean;
 }
 
+interface Application {
+  id: number;
+  candidate: {
+    firstName: string;
+    lastName: string;
+    user: {
+      email: string;
+    };
+  };
+  job: {
+    title: string;
+    deadline: string | null;
+  };
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  createdAt: string;
+}
+
 const CompanyDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'jobs' | 'applications' | 'settings'>('overview');
@@ -72,6 +89,11 @@ const CompanyDashboard: React.FC = () => {
     hired: 0
   });
 
+  // Applications state
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [applicationsError, setApplicationsError] = useState('');
+
   useEffect(() => {
     fetchCompanyProfile();
   }, []);
@@ -81,6 +103,8 @@ const CompanyDashboard: React.FC = () => {
       fetchStats();
     } else if (activeTab === 'jobs') {
       fetchJobs();
+    } else if (activeTab === 'applications') {
+      fetchApplications();
     }
   }, [activeTab]);
 
@@ -124,18 +148,54 @@ const CompanyDashboard: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/jobs/my-jobs');
-      const jobsList = response.data;
+      // Fetch jobs for active jobs count
+      const jobsResponse = await axios.get('/api/jobs/my-jobs');
+      const jobsList = jobsResponse.data;
       const totalApps = jobsList.reduce((sum: number, job: Job) => sum + job._count.applications, 0);
+
+      // Fetch applications for status counts
+      const appsResponse = await axios.get('/api/applications/company');
+      const applications = appsResponse.data.applications;
+      const pendingReview = applications.filter((app: Application) => app.status === 'PENDING').length;
+      const hired = applications.filter((app: Application) => app.status === 'ACCEPTED').length;
       
       setStats({
         activeJobs: jobsList.length,
         totalApplications: totalApps,
-        pendingReview: 0, // TODO: Fetch from applications endpoint
-        hired: 0 // TODO: Fetch from applications endpoint
+        pendingReview,
+        hired
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Fallback to basic stats if applications endpoint fails
+      try {
+        const jobsResponse = await axios.get('/api/jobs/my-jobs');
+        const jobsList = jobsResponse.data;
+        const totalApps = jobsList.reduce((sum: number, job: Job) => sum + job._count.applications, 0);
+        
+        setStats({
+          activeJobs: jobsList.length,
+          totalApplications: totalApps,
+          pendingReview: 0,
+          hired: 0
+        });
+      } catch (jobsError) {
+        console.error('Error fetching jobs for stats:', jobsError);
+      }
+    }
+  };
+
+  const fetchApplications = async () => {
+    try {
+      setApplicationsLoading(true);
+      setApplicationsError('');
+      const response = await axios.get('/api/applications/company');
+      setApplications(response.data.applications);
+    } catch (error: any) {
+      console.error('Error fetching applications:', error);
+      setApplicationsError(error.response?.data?.error || 'Failed to fetch applications');
+    } finally {
+      setApplicationsLoading(false);
     }
   };
 
@@ -619,16 +679,95 @@ const CompanyDashboard: React.FC = () => {
   const renderApplications = () => {
     return (
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Applications</h2>
+        <h2 className="text-2xl font-bold text-text-primary mb-6">Applications</h2>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="text-gray-500 text-center py-12">
-            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <p className="text-lg font-medium">No applications yet</p>
-            <p className="text-sm mt-2">Applications will appear here once candidates start applying to your jobs</p>
-          </div>
+        <div className="bg-surface rounded-xl shadow-medium p-6">
+          {applicationsLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <p className="text-text-secondary mt-4">Loading applications...</p>
+            </div>
+          ) : applicationsError ? (
+            <div className="text-center py-12">
+              <svg className="w-16 h-16 text-error mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-error font-medium">Error loading applications</p>
+              <p className="text-text-secondary text-sm mt-2">{applicationsError}</p>
+              <button
+                onClick={fetchApplications}
+                className="mt-4 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : applications.length === 0 ? (
+            <div className="text-center py-12">
+              <svg className="w-16 h-16 text-text-secondary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p className="text-lg font-medium text-text-primary">No applications yet</p>
+              <p className="text-text-secondary text-sm mt-2">Applications will appear here once candidates start applying to your jobs</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Candidate
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Job Title
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Applied Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {applications.map((application) => (
+                    <tr key={application.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {application.candidate.firstName} {application.candidate.lastName}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {application.candidate.user.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{application.job.title}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {new Date(application.createdAt).toLocaleDateString()}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          application.status === 'ACCEPTED'
+                            ? 'bg-green-100 text-green-800'
+                            : application.status === 'REJECTED'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {application.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     );

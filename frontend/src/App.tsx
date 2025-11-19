@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CompanyDashboard from './pages/company/CompanyDashboard';
 import CandidateProfile from './pages/candidate/CandidateProfile';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   return (
@@ -17,7 +18,11 @@ export default function App() {
       <main>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={
+            <ErrorBoundary>
+              <Home />
+            </ErrorBoundary>
+          } />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signup/company" element={<CompanySignup />} />

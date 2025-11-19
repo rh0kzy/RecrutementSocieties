@@ -7,6 +7,78 @@ import { requireRole } from '../lib/validate';
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// Company: Get applications for company's jobs
+router.get('/company', authenticate, requireRole(['COMPANY']), async (req, res) => {
+  try {
+    const user = (req as any).user;
+    const { page = '1', limit = '10', search = '', status = 'all' } = req.query;
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Get company profile
+    const company = await prisma.company.findUnique({
+      where: { userId: user.id }
+    });
+
+    if (!company) {
+      return res.status(404).json({ error: 'Company profile not found' });
+    }
+
+    // Build where clause
+    const where: any = {
+      companyId: company.id
+    };
+
+    if (status && status !== 'all') {
+      where.status = status;
+    }
+
+    if (search) {
+      where.OR = [
+        { candidate: { firstName: { contains: search as string, mode: 'insensitive' } } },
+        { candidate: { lastName: { contains: search as string, mode: 'insensitive' } } },
+        { job: { title: { contains: search as string, mode: 'insensitive' } } },
+      ];
+    }
+
+    const [applications, total] = await Promise.all([
+      prisma.application.findMany({
+        where,
+        skip,
+        take: limitNum,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          candidate: {
+            include: {
+              user: {
+                select: { email: true }
+              }
+            }
+          },
+          job: {
+            select: { title: true, deadline: true }
+          }
+        }
+      }),
+      prisma.application.count({ where })
+    ]);
+
+    res.json({
+      applications,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum)
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching company applications:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Admin: Get all applications across companies with pagination and filters
 router.get('/admin/all', authenticate, requireRole(['ADMIN']), async (req, res) => {
   try {
