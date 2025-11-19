@@ -402,8 +402,8 @@ Phase 8 — UI/UX Polish & Localization
 - [ ] X.13 - Add call-to-action buttons throughout (Login, Sign Up for Companies/Candidates)
 - [x] X.14 - Make homepage fully responsive and mobile-optimized
 - [x] X.15 - Add animations and micro-interactions for better UX
-- [ ] X.16 - Implement SEO optimization (meta tags, structured data)
-- [ ] X.17 - Add Open Graph tags for social media sharing
+- [x] X.16 - Implement SEO optimization (meta tags, structured data)
+- [x] X.17 - Add Open Graph tags for social media sharing
 - [x] X.18 - Create loading states and error boundaries for homepage
 - [x] X.19 - Add accessibility features (ARIA labels, keyboard navigation)
 - [ ] X.20 - Test homepage performance and optimize loading speed
